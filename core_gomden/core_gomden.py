@@ -3,8 +3,7 @@ import base64
 from io import BytesIO
 from PIL import Image
 
-from pdf2image import convert_from_path, convert_from_bytes
-
+from pdf2image import convert_from_bytes, exceptions
 import flask
 from flask import *
 from flask_wtf import FlaskForm
@@ -74,11 +73,47 @@ def postNewBook(userid):
 
     file = request.files['filepdf']
     if file.filename == "":
-        return "You do not attach a file"
+        return render_template("new-book.html", form=form, message="You do not attach a file.")
     if not allowed_file(file):
-        return "Your file must be a PDF"   
+        return render_template("new-book.html", form=form, message="Your file must be a PDF.")
 
     filepdf = request.files['filepdf'].read()
+
+    if len(filepdf) > config.MAX_PDF_SIZE:
+        return render_template("new-book.html", form=form, message="Your file is too large.")
+
+    try:
+        smallpages = convert_from_bytes(filepdf, config.SMALL_DPI, fmt="jpg")
+        largepages = convert_from_bytes(filepdf, config.LARGE_DPI, fmt="jpg")
+    except exceptions.PDFPageCountError:
+        return render_template("new-book.html", form=form, message="Your file must be a PDF")
+
+    if len(smallpages) < 1 or len(smallpages) > config.MAX_PDF_PAGES:
+        return render_template("new-book.html", form=form, message=f"Your PDF exceeds {config.MAX_PDF_PAGES} pages")
+
+
+    smallbytes = []
+    largebytes = []
+    for page in smallpages:
+        img_byte_arr = BytesIO()
+        page.save(img_byte_arr, format='jpeg')
+        img_byte_arr = img_byte_arr.getvalue()
+        smallbytes.append(img_byte_arr)
+    for page in largepages:
+        img_byte_arr = BytesIO()
+        page.save(img_byte_arr, format='jpeg')
+        img_byte_arr = img_byte_arr.getvalue()
+        largebytes.append(img_byte_arr)
+        
+        #with BytesIO() as output:
+            #page.save(output, 'jpg')
+            #data = output.getvalue()
+            #smallbytes.append(data)
+
+    # TODO: validate dimensions of each page
+    #for page in pages:
+        #if page
+
     #else:
         # TODO: better friendly error message on missing file, and not PDF filetype
     #    abort(500)
@@ -94,9 +129,9 @@ def postNewBook(userid):
     if not config.saneLinkUrl(link2):
         return render_template("new-book.html", form=form, message="Invalid secondary link url")
     if len(link1) == 0:
-        return render_template("new-book.html", form=form, message="You must include a primary link")
+        return render_template("new-book.html", form=form, message="You must include a primary link.")
         
-    bookid = db.insertNewBook(userid, booktitle, link1, link2, filepdf)
+    bookid = db.insertNewBook(userid, booktitle, link1, link2, smallbytes, largebytes)
 
     return redirect(url_for('core_gomden_blueprint.existingbook', bookid=bookid))
 
@@ -143,11 +178,13 @@ def existingbook(bookid):
 
     book = db.getBook(bookid)
 
-    bits = book["bits"]
+    return book["booktitle"]
 
-    pages = convert_from_bytes(bits, 200, fmt="jpg")
+    #bits = book["bits"]
 
-    page = pages[0]
+    #pages = convert_from_bytes(bits, 200, fmt="jpg")
+
+    #page = pages[0]
 
     img = tob64(page)
     return render_template("book.html", form=form, booktitle=book["booktitle"], img=img)

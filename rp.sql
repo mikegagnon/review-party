@@ -1,10 +1,19 @@
 BEGIN TRANSACTION;
 
+CREATE TABLE "pdfimgs" (
+    "pdfimgid" BIGSERIAL PRIMARY KEY,
+    "userid" BIGINT,
+    "bookid" BIGINT,
+    "pagenum" BIGINT,
+    "size" TEXT, /* SMALL or LARGE */
+    "bits" BYTEA
+);
+/*
 CREATE TABLE "pdfs" (
     "pdfid" BIGSERIAL PRIMARY KEY,
     "userid" BIGINT,
     "bits" BYTEA
-);
+);*/
 
 CREATE TABLE "books" (
     "bookid" BIGSERIAL PRIMARY KEY,
@@ -12,7 +21,8 @@ CREATE TABLE "books" (
     "booktitle" TEXT,
     "link1" TEXT,
     "link2" TEXT,
-    "pdfid" BIGINT
+    #"pdfid" BIGINT,
+    "numpdfpages" BIGINT
 );
 
 CREATE TABLE "users" (

@@ -63,7 +63,7 @@ def toBookJson(record):
         "booktitle": record[2],
         "link1": record[3],
         "link2": record[4],
-        "pdfid": record[5]
+        "numpdfpages": record[5]
     }
 
 # def getBookBits(pdfid):
@@ -84,7 +84,7 @@ def getBook(bookid):
     conn = getConn()
     c = conn.cursor()
     c.execute("""
-        SELECT bookid, userid, booktitle, link1, link2, pdfid
+        SELECT bookid, userid, booktitle, link1, link2, numpdfpages
         FROM books WHERE bookid=%s""", (bookid,))
     result = c.fetchone()
     
@@ -96,17 +96,17 @@ def getBook(bookid):
 
     book = toBookJson(result)
 
-    pdfid = book["pdfid"]
+    # pdfid = book["pdfid"]
 
-    c.execute("""
-        SELECT bits
-        FROM pdfs WHERE pdfid=%s""", (pdfid,))
-    result = c.fetchone()
-    if not result:
-        c.close()
-        conn.commit()
-        return None
-    book["bits"] = result[0]
+    # c.execute("""
+    #     SELECT bits
+    #     FROM pdfs WHERE pdfid=%s""", (pdfid,))
+    # result = c.fetchone()
+    # if not result:
+    #     c.close()
+    #     conn.commit()
+    #     return None
+    # book["bits"] = result[0]
 
     c.close()
     conn.commit()
@@ -114,28 +114,44 @@ def getBook(bookid):
     return book
 
 @ErrorRollback
-def insertNewBook(userid, booktitle, link1, link2, filepdf):
+def insertNewBook(userid, booktitle, link1, link2, smallpages, largepages):
     conn = getConn()
     c = conn.cursor()
 
-    c.execute("""
-        INSERT INTO pdfs
-        (userid, bits)
-        VALUES (%s, %s) """, (userid, filepdf))
+    # c.execute("""
+    #     INSERT INTO pdfs
+    #     (userid, bits)
+    #     VALUES (%s, %s) """, (userid, filepdf))
 
-    c.execute("SELECT MAX(pdfid) FROM pdfs")
-    result = c.fetchone()
-    pdfid = result[0]
+    #c.execute("SELECT MAX(pdfid) FROM pdfs")
+    #result = c.fetchone()
+    #pdfid = result[0]
 
     c.execute("""
         INSERT INTO books
-        (userid, booktitle, link1, link2, pdfid)
-        VALUES (%s, %s, %s, %s, %s) """, (userid, booktitle, link1, link2, pdfid))
+        (userid, booktitle, link1, link2, numpdfpages)
+        VALUES (%s, %s, %s, %s, %s) """, (userid, booktitle, link1, link2, len(smallpages)))
 
     #result = int(c.fetchone()[0])
     c.execute("SELECT MAX(bookid) FROM books")
     result = c.fetchone()
     bookid = result[0]
+
+    pagenum = 0
+    for page in smallpages:
+        pagenum += 1
+        c.execute("""
+        INSERT INTO pdfimgs
+        (userid, bookid, pagenum, size, bits)
+        VALUES (%s, %s, %s, 'SMALL', %s) """, (userid, bookid, pagenum, page))
+
+    pagenum = 0
+    for page in largepages:
+        pagenum += 1
+        c.execute("""
+        INSERT INTO pdfimgs
+        (userid, bookid, pagenum, size, bits)
+        VALUES (%s, %s, %s, 'LARGE', %s) """, (userid, bookid, pagenum, page))
     
     c.close()
     conn.commit()

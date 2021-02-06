@@ -1,6 +1,8 @@
 # Clubby-1
 
-brew install poppler
+local: brew install poppler
+heroku: https://elements.heroku.com/buildpacks/amitree/heroku-buildpack-poppler
+
 
 Except where otherwise noted, everything in this repository is copyrighted by
 Michael N. Gagnon, 2020.

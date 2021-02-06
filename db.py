@@ -160,8 +160,18 @@ def insertNewBook(userid, booktitle, link1, link2, smallpages, largepages):
 
 @ErrorRollback
 def getImg(bookid, size, pagenum):
+
     conn = getConn()
     c = conn.cursor()
+
+    c.execute("""
+        SELECT numpdfpages
+        FROM books WHERE bookid=%s""", (bookid,))
+    numpdfpages = int(c.fetchone()[0])
+
+    if pagenum < 1 or pagenum > numpdfpages:
+        return None
+    
     c.execute("""
         SELECT bits
         FROM pdfimgs WHERE bookid=%s AND size=%s AND pagenum=%s

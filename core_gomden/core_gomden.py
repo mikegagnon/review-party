@@ -203,6 +203,9 @@ def get_image(bookid, size, pagenum):
     #image_binary = read_image(pid)
     image_binary = db.getImg(bookid, size, pagenum)
 
+    if image_binary == None:
+        abort(404)
+
     return send_file(BytesIO(image_binary),
                      attachment_filename=f'{pagenum}.jpg',
                      mimetype='image/jpg')

@@ -3,16 +3,7 @@
 
 
 local: brew install poppler
-
-Add buildpacks via web interface:
-* https://github.com/survantjames/heroku-buildpack-poppler
-* https://github.com/freddix/libpng12
-
-? https://stackoverflow.com/questions/63413122/error-while-trying-to-use-pdf2image-on-heroku-libpng12-so-0-cannot-open-share
-
-heroku: https://elements.heroku.com/buildpacks/survantjames/heroku-buildpack-poppler
-heroku broken: https://elements.heroku.com/buildpacks/amitree/heroku-buildpack-poppler
-
+heroku: Aptfile + https://elements.heroku.com/buildpacks/heroku/heroku-buildpack-apt
 
 Except where otherwise noted, everything in this repository is copyrighted by
 Michael N. Gagnon, 2020.

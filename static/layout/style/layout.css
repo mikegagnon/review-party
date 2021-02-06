@@ -101,3 +101,7 @@ main {
 .helpMessageTrimmed {
     font-size: 10pt;
 }
+
+.small-page {
+    width: 100%
+}

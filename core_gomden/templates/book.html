@@ -36,9 +36,7 @@
             </div>
             <div class="col-md-8">
 
-                <div class="card mb-8 box-shadow">
-                    <img class="small-page" src="{{ url_for('core_gomden_blueprint.get_image', bookid=bookid, size='small', pagenum=p+1) }}">
-                </div>
+                    <a href="{{url_for('core_gomden_blueprint.get_image', bookid=bookid, size='small', pagenum=p+1)}}"><img style="width: 100%" src="{{ url_for('core_gomden_blueprint.get_image', bookid=bookid, size='small', pagenum=p+1) }}"></a>
             </div>
             <div class="col-md-2">
             </div>

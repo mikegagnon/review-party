@@ -1,8 +1,10 @@
 # Clubby-1
 
 
+1
 local: brew install poppler
-heroku: https://elements.heroku.com/buildpacks/amitree/heroku-buildpack-poppler
+heroku: https://elements.heroku.com/buildpacks/survantjames/heroku-buildpack-poppler
+heroku broken: https://elements.heroku.com/buildpacks/amitree/heroku-buildpack-poppler
 
 
 Except where otherwise noted, everything in this repository is copyrighted by

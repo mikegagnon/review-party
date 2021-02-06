@@ -35,3 +35,13 @@ def getUserOrAnonymousName():
         return session["username"]
     else:
         return "Anonymous"
+
+@core_gomden_blueprint.route("/new-book")
+def landing():
+    form = EmptyForm()
+
+    if "userid" not in session:
+        abort(403)
+
+    form = EmptyForm()
+    return render_template("new-book.html", form=form)

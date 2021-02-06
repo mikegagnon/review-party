@@ -178,16 +178,14 @@ def existingbook(bookid):
 
     book = db.getBook(bookid)
 
-    return book["booktitle"]
+    links = [book["link1"]]
 
-    #bits = book["bits"]
+    if book["link2"]:
+        links.append(book["link2"])
 
-    #pages = convert_from_bytes(bits, 200, fmt="jpg")
+    numpdfpages = book["numpdfpages"]
 
-    #page = pages[0]
-
-    img = tob64(page)
-    return render_template("book.html", form=form, booktitle=book["booktitle"], img=img)
+    return render_template("book.html", form=form, bookid=book["bookid"], booktitle=book["booktitle"], links=links, numpdfpages=numpdfpages)
 
 
 @core_gomden_blueprint.route('/page/<int:bookid>/<size>/<int:pagenum>.jpg')

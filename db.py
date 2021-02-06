@@ -66,19 +66,6 @@ def toBookJson(record):
         "numpdfpages": record[5]
     }
 
-# def getBookBits(pdfid):
-#     conn = getConn()
-#     c = conn.cursor()
-#     c.execute("""
-#         SELECT bits
-#         FROM pdfs WHERE pdfid=%s""", (pdfid,))
-#     result = c.fetchone()
-#     if not result:
-#         c.close()
-#         conn.commit()
-#         return None
-#     return result[0]
-
 @ErrorRollback
 def getBook(bookid):
     conn = getConn()

@@ -4,15 +4,52 @@
 {% block content %}
 
 <main role="main" class="container">
-    <h1>{{booktitle}}</h1>
 
 
     
 
-    <img src="data:image/jpg;base64, {{img|safe}}" alt="Red dot" />
-    {% for link in links %}
-        <p><a href="{{link}}">{{link}}</a></p>
-    {% endfor %}
+
+
+
+
+      <div class="album py-5 bg-light">
+        <div class="container">
+
+          <div class="row">
+            <div class="col-md-2">
+            </div>
+            <div class="col-md-8">
+
+                {% for link in links %}
+                    <p><a href="{{link}}">{{link}}</a></p>
+                {% endfor %}
+            </div>
+            <div class="col-md-2">
+            </div>
+
+          </div>
+
+{% for p in range(numpdfpages) %}
+
+          <div class="row">
+            <div class="col-md-2">
+            </div>
+            <div class="col-md-8">
+
+                <div class="card mb-8 box-shadow">
+                    <img class="small-page" src="{{ url_for('core_gomden_blueprint.get_image', bookid=bookid, size='small', pagenum=p+1) }}">
+                </div>
+            </div>
+            <div class="col-md-2">
+            </div>
+
+          </div>
+{% endfor %}
+
+        </div>
+      </div>
+
+
 
 </main>
 {% endblock %}

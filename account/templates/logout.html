@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% block title %}Create account{% endblock %}
+{% block create_account_active %}active{% endblock %}
+{% block content %}
+
+<main role="main" class="container">
+  <form action="{{ url_for('account_blueprint.logout') }}" method="post">
+    
+      <div><button class="btn-primary btn" type="submit">Logout</button></div>
+
+      {{ form.csrf_token }}
+
+  </form>
+</main>
+
+{% endblock %}
+

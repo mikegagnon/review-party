@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+{% block title %}Invite{% endblock %}
+{% block invite_active %}active{% endblock %}
+{% block content %}
+<main role="main" class="container">
+
+
+<section class="jumbotron text-center">
+        <div class="container">
+          <h1 class="jumbotron-heading" style="font-size: 40pt; font-family: Helvetica;">You're invited</h1>
+
+<h2 style="font-weight: normal; font-size: 20pt; margin-top: 30px;">Follow this link to sign up:</h2>
+
+<h2 style="font-weight: normal; font-size: 20pt; margin-top: 30px;"><a href="{{invitelink}}">{{invitelink}}</a></h2>
+
+
+        </div>
+      </section>
+
+      <div>
+        <center><div id="code"><div id="qrcode"></div></div>
+            </center>
+      
+      </div>
+
+
+
+        
+
+</main>
+
+<script type="text/javascript">
+  var qrcode = new QRCode("qrcode", {
+      text: '{{invitelink}}',
+      width: 300,
+      height: 300,
+      colorDark : "#000000",
+      colorLight : "#ffffff",
+      correctLevel : QRCode.CorrectLevel.L
+  });
+</script>
+{% endblock %}

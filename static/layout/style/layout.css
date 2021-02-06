@@ -1,0 +1,103 @@
+body {
+  padding-top: 30px; 
+}
+
+.content-container {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.newpage-textarea {
+    font-size: 10pt;
+    font-family: "Menlo", "Lucida Console", Monaco, monospace;
+}
+
+.button {
+    font-family: "Menlo", "Lucida Console", Monaco, monospace;
+}
+
+.sidenote-container {
+    position: relative;
+}
+
+.navbar {
+    font-family: Helvetica, sans-serif;
+}
+
+.hide {
+    display: none;
+}
+
+main {
+    padding-top: 20px; 
+}
+
+.outstandingCheckpoint {
+    font-size: 80%;
+    margin-bottom: 0px;   
+}
+
+.unreadCheckpoint {
+    color: red;
+}
+
+.unreadMessage {
+    color: LightGreen !important;
+}
+
+.navbar-brand {
+    font-size: 12pt;
+}
+
+.navbar {
+    font-size: 10pt;
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+.smallFont {
+    font-size: 10pt !important;
+}
+
+.newStudentButton {
+    padding-top: 10px;
+    padding-bottom: 10px;
+} 
+
+.teacher-admin-input-box {
+    border: 1px solid black !important;
+    background-color: yellow !important
+    font-size: 20pt !important;
+}
+
+.studentListing td {
+    padding-right: 10px;
+}
+
+.checkpointColumn {
+    padding-right: 15px;
+}
+
+.checkpointLink {
+    padding-right: 15px;
+}
+
+.checkpointDesc {
+    word-break:break-all;
+}
+
+.checkpointAge {
+    padding-right: 15px;
+}
+
+.activtyColumnRow td {
+    padding-right: 15px;
+}
+
+.helpMessageCheckpoint {
+    font-size: 10pt;
+    padding-top: 10px;
+}
+
+.helpMessageTrimmed {
+    font-size: 10pt;
+}

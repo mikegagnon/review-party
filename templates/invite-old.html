@@ -1,0 +1,24 @@
+<html>
+<head>
+      <script src="{{ url_for('static', filename='layout/js/qrcode.js')}}"></script>
+      <script src="{{ url_for('static', filename='layout/js/jquery-2.2.4.min.js')}}"></script>
+</head>
+<body>
+        <center>
+          <div id="code">
+            <div id="qrcode"></div>
+            {{code}}
+          </div>
+        </center>
+        <script type="text/javascript">
+          var qrcode = new QRCode("qrcode", {
+              text: '{{url}}',
+              width: 300,
+              height: 300,
+              colorDark : "#000000",
+              colorLight : "#ffffff",
+              correctLevel : QRCode.CorrectLevel.L
+          });
+        </script>
+      </body>
+</html>

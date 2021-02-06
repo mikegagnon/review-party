@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+{% block title %}Create account{% endblock %}
+{% block create_account_active %}active{% endblock %}
+{% block content %}
+
+<main role="main" class="container">
+<form action="{{ url_for('account_blueprint.create_account', token=invitetoken) }}" method="post">
+
+    {% if message %}
+      <div class="alert alert-warning" role="alert">
+        <p>{{ message }}</p>
+      </div>
+    {% endif %}
+
+
+    <div class="mb-3">
+      <label for="username">Your name, or pen name. Club members will see your name.</label>
+      <div class="input-group">
+        <input type="text" class="form-control" name="displayname" id="displayname" placeholder="Your name, or pen name" required>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="email">Email</label>
+      <div class="input-group">
+        <input type="text" class="form-control" name="email" id="email" placeholder="Email" required>
+      </div>
+    </div>
+    
+    <div><button type="submit" class="btn btn-primary">Create account</button></div>
+
+    {{ form.csrf_token }}
+
+</form>
+</main>
+{% endblock %}

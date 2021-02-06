@@ -1,0 +1,15 @@
+hello {{ hashtag }}
+<br><br>
+
+<ol>
+{% for entry in richentries %}
+    <li><a style='font-size: 200%' href="../main/{{entry[0]}}/index.html">{{entry[0]}}/index.html</a>
+        {% for tag in entry[1] %}
+            <a href="{{tag}}.html">#{{tag}}</a>
+        {% endfor %}
+    </li>
+{% endfor %}
+</ol>
+
+<br><br>
+<h1>#0-day</h1><ol><li><a style='font-size: 200%' href='../main/yana/part3/p113-a-lesson/p113/index.html'>yana/part3/p113-a-lesson/p113/index.html</a> <a href='../../hash/0-day.html'>#0-day</a> <a href='../../hash/absolute-reality.html'>#absolute-reality</a> <a href='../../hash/blue.html'>#blue</a> <a href='../../hash/blue-pill.html'>#blue-pill</a> <a href='../../hash/borders.html'>#borders</a> <a href='../../hash/gbi.html'>#gbi</a> <a href='../../hash/lesson.html'>#lesson</a> <a href='../../hash/matrix.html'>#matrix</a> <a href='../../hash/qemu.html'>#qemu</a> <a href='../../hash/red.html'>#red</a> <a href='../../hash/red-pill.html'>#red-pill</a> <a href='../../hash/student.html'>#student</a> <a href='../../hash/teacher.html'>#teacher</a> <a href='../../hash/wp.html'>#wp</a> <a href='../../hash/ww.html'>#ww</a> <a href='../../hash/ww0.html'>#ww0</a> <a href='../../hash/zbg.html'>#zbg</a> </li></ol>

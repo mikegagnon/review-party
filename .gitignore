@@ -1,0 +1,8 @@
+__pycache__/
+account/__pycache__/
+core_gomden/__pycache__/
+landing/__pycache__/
+node_modules/
+dump.rdb
+.DS_Store
+*.pyc

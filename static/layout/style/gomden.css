@@ -1,0 +1,19 @@
+.gomden-header { 
+    font-family: Helvetica, Arial, Sans-Serif;
+}
+
+.gomden-title-page-name {
+    color: #aaa;
+}
+
+.gomden-missing-page-link {
+    color: red;
+}
+
+.gomden-disabled-text {
+    color: #aaa;
+}
+
+.gomden-content-license {
+    color: #aaa;
+}

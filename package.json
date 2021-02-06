@@ -1,0 +1,23 @@
+{
+  "name": "clubby",
+  "version": "1.0.0",
+  "description": "Except where otherwise noted, everything in this repository is copyrighted by Michael N. Gagnon, 2020.",
+  "main": "index.js",
+  "dependencies": {
+    "npm-watch": "^0.6.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-preset-es2015": "^6.24.1"
+  },
+  "scripts": {
+      "build": "babel --presets es2015 source/js/ -d core_gomden/static/js/my/",
+      "watch": "npm-watch"
+  },
+  "watch": {
+      "build": "source/js/*.js"
+  },
+  "author": "",
+  "license": "UNLICENSED"
+}

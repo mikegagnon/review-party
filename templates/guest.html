@@ -1,0 +1,65 @@
+<html>
+    <head>
+        <script src="{{ url_for('static', filename='layout/js/jquery-2.2.4.min.js')}}"></script>
+        <script src="{{ url_for('static', filename='layout/js/qrcode.js')}}"></script>
+
+    </head>
+    <body>
+        <div id="img-div" style="display: none;"><img id="imgfoo" style="width:100%;" src=""></div>
+        <div id="code-div">
+            <center>
+              <div id="code">
+                <div id="qrcode"></div>
+              </div>
+              {{code}}
+            </center>
+        </div>
+        
+    </body>
+    <script type="text/javascript">
+
+
+        function showCode() {
+            $("#qrcode").empty();
+            var qrcode = new QRCode("qrcode", {
+                  text: window.location.href,
+                  width: 300,
+                  height: 300,
+                  colorDark : "#000000",
+                  colorLight : "#ffffff",
+                  correctLevel : QRCode.CorrectLevel.L
+              });
+        }
+
+        function update(imgurl) {
+            $("#imgfoo").attr("src", imgurl);
+        }
+
+        // https://stackoverflow.com/questions/32163159/get-url-content-using-jquery
+        function url_content(url){
+            return $.get(url);
+        }
+
+
+    
+
+        function blip() {
+            // TODO: protect with key
+            url_content('{{url}}').success(function(data){ 
+                if (data.startsWith("code:")) {
+                    //$("#code-div").text(data);
+                    showCode(data);
+                    $("#code-div").show();
+                    $("#img-div").hide();
+                } else {
+                    update(data);
+                    $("#code-div").hide();
+                    $("#img-div").show();
+                }
+                console.log(data)
+            });
+
+        }
+        myInterval = setInterval(blip, 1000);
+    </script>
+</html>

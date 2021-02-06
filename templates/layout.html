@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='layout/img/favicon.png')}}">
+    <title>Clubby</title>
+    <link href="{{ url_for('static', filename='layout/style/bootstrap.css')}}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='layout/style/layout.css')}}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='layout/style/gomden.css')}}" rel="stylesheet">
+    <script src="{{ url_for('static', filename='layout/js/jquery-2.2.4.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='layout/js/popper.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='layout/js/bootstrap.js')}}"></script>
+    <script src="{{ url_for('static', filename='layout/js/qrcode.js')}}"></script>
+
+    {% block landingpage %}{% endblock %}
+    {% block wikipageincludes %}{% endblock %}
+  </head>
+
+  <body id="page-top">
+
+    <nav class="navbar fixed-top navbar-expand-md navbar-dark bg-dark mb-4">
+      <a class="navbar-brand" href="{{ url_for('landing_blueprint.landing')}}">Clubby</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarCollapse">
+        <ul class="navbar-nav mr-auto">
+          
+          {% if 'userid' not in session %}
+            <li class="nav-item {% block login_active %}{% endblock %}">
+              <a class="nav-link" href="{{url_for('account_blueprint.login')}}">Login</a>
+            </li>
+
+          {% else %}
+
+            <li class="nav-item {% block username_active %}{% endblock %}">
+                <a class="nav-link" href="{{ url_for('landing_blueprint.landing') }}">{{ session['email'] }}</a>
+            </li>
+
+            <li class="nav-item {% block invite_active %}{% endblock %}">
+                <a class="nav-link" href="{{ url_for('account_blueprint.invitepage') }}">Invite a friend</a>
+            </li>
+
+            <li class="nav-item {% block logout_active %}{% endblock %}">
+              <form action="{{ url_for('account_blueprint.logout') }}" method="post">
+                
+                  <div><button style="background: transparent; box-sizing: none; border: 0px; outline: none; cursor: pointer;" class="nav-link" type="submit">Logout</button></div>
+
+                  {{ form.csrf_token }}
+
+              </form>
+            </li>
+
+          {% endif %}
+
+
+
+
+        </ul>
+      </div>
+    </nav>
+    <main>
+      {% block content %}{% endblock %}
+    </main>
+
+  </body>
+  {% block pastbody %}{% endblock %}
+
+</html>

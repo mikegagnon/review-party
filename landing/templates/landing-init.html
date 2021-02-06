@@ -1,0 +1,18 @@
+
+{% extends "layout.html" %}
+{% block title %}Clubby{% endblock %}
+{% block view_wikipage_active %}active{% endblock %}
+
+{% block content %}
+
+<h1>Init</h1>
+
+<p>No one has registered yet. You, the admin, should register.</p>
+
+<p><a href="{{ url_for('account_blueprint.create_account', token='0')}}">Register here</a>.</p>
+
+{% endblock %}
+
+{% block pastbody %}
+
+{% endblock %}

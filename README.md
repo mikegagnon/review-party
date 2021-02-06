@@ -1,5 +1,7 @@
 # Clubby-1
 
+brew install poppler
+
 Except where otherwise noted, everything in this repository is copyrighted by
 Michael N. Gagnon, 2020.
 

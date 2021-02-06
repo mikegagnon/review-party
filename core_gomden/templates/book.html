@@ -7,6 +7,9 @@
     <h1>{{booktitle}}</h1>
 
 
+    
+
+    <img src="data:image/jpg;base64, {{img|safe}}" alt="Red dot" />
     {% for link in links %}
         <p><a href="{{link}}">{{link}}</a></p>
     {% endfor %}

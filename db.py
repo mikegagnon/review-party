@@ -158,6 +158,19 @@ def insertNewBook(userid, booktitle, link1, link2, smallpages, largepages):
 
     return bookid;
 
+@ErrorRollback
+def getImg(bookid, size, pagenum):
+    conn = getConn()
+    c = conn.cursor()
+    c.execute("""
+        SELECT bits
+        FROM pdfimgs WHERE bookid=%s AND size=%s AND pagenum=%s
+        ORDER BY pdfimgid DESC""", (bookid, size, pagenum))
+    result = c.fetchone()[0]
+    c.close()
+    conn.commit()
+
+    return result
 
 @ErrorRollback
 def getNumRegisteredUsers():

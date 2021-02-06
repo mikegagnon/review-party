@@ -189,3 +189,25 @@ def existingbook(bookid):
     img = tob64(page)
     return render_template("book.html", form=form, booktitle=book["booktitle"], img=img)
 
+
+@core_gomden_blueprint.route('/page/<int:bookid>/<size>/<int:pagenum>.jpg')
+def get_image(bookid, size, pagenum):
+
+    if size == "small":
+        size = "SMALL"
+    elif size == "large":
+        size = "LARGE"
+    else:
+        abort(404)
+
+    #image_binary = read_image(pid)
+    image_binary = db.getImg(bookid, size, pagenum)
+
+    return send_file(BytesIO(image_binary),
+                     attachment_filename=f'{pagenum}.jpg',
+                     mimetype='image/jpg')
+    #response = make_response(image_binary)
+    #response.headers.set('Content-Type', 'image/jpeg')
+    #response.headers.set(
+    #    'Content-Disposition', 'attachment', filename='%s.jpg' % pagenum)
+    #return response

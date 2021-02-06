@@ -56,6 +56,62 @@ def toUserJson(record):
         "ts": record[4]
     }
 
+def toBookJson(record):
+    return {
+        "bookid": record[0],
+        "userid": record[1],
+        "booktitle": record[2],
+        "link1": record[3],
+        "link2": record[4],
+        "pdfid": record[5]
+    }
+
+# def getBookBits(pdfid):
+#     conn = getConn()
+#     c = conn.cursor()
+#     c.execute("""
+#         SELECT bits
+#         FROM pdfs WHERE pdfid=%s""", (pdfid,))
+#     result = c.fetchone()
+#     if not result:
+#         c.close()
+#         conn.commit()
+#         return None
+#     return result[0]
+
+@ErrorRollback
+def getBook(bookid):
+    conn = getConn()
+    c = conn.cursor()
+    c.execute("""
+        SELECT bookid, userid, booktitle, link1, link2, pdfid
+        FROM books WHERE bookid=%s""", (bookid,))
+    result = c.fetchone()
+    
+    # TODO: raise exception?
+    if not result:
+        c.close()
+        conn.commit()
+        return None
+
+    book = toBookJson(result)
+
+    pdfid = book["pdfid"]
+
+    c.execute("""
+        SELECT bits
+        FROM pdfs WHERE pdfid=%s""", (pdfid,))
+    result = c.fetchone()
+    if not result:
+        c.close()
+        conn.commit()
+        return None
+    book["bits"] = result[0]
+
+    c.close()
+    conn.commit()
+
+    return book
 
 @ErrorRollback
 def insertNewBook(userid, booktitle, link1, link2, filepdf):

@@ -4,7 +4,7 @@
 {% block content %}
 
 <main role="main" class="container">
-<form action="{{ url_for('core_gomden_blueprint.newbook') }}" method="post">
+<form action="{{ url_for('core_gomden_blueprint.newbook') }}" method="post" enctype=multipart/form-data>
 
     {% if message %}
       <div class="alert alert-warning" role="alert">
@@ -24,7 +24,7 @@
     <div class="mb-3">
       <label for="email">Primary link</label>
       <div class="input-group">
-        <input type="text" class="form-control" name="link1" id="link1" placeholder="Primary link url (optional)">
+        <input type="text" class="form-control" name="link1" id="link1" placeholder="Primary link url (mandatory)">
       </div>
     </div>
 
@@ -35,6 +35,8 @@
       </div>
     </div>
     
+    <input type=file name="filepdf">
+
     <div><button type="submit" class="btn btn-primary">Submit book</button></div>
 
     {{ form.csrf_token }}

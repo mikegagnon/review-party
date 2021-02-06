@@ -57,7 +57,7 @@ def saneBooktitle(booktitle):
     )
 
 def saneLinkUrl(link):
-    return (
+    return len(link) == 0 or (
         len(link) >= MIN_LINK_URL_LEN and
         len(link) <= MAX_LINK_URL_LEN and
         LINKURL_RE.match(link)

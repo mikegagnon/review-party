@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+{% block title %}Book{% endblock %}
+{% block create_account_active %}active{% endblock %}
+{% block content %}
+
+<main role="main" class="container">
+    <h1>{{booktitle}}</h1>
+
+
+    {% for link in links %}
+        <p><a href="{{link}}">{{link}}</a></p>
+    {% endfor %}
+
+</main>
+{% endblock %}

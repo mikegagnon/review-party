@@ -254,27 +254,27 @@ Using a password of 'password' is probably fine, since it's just your private de
 
     ssh localhost -p 2222
     sudo -u postgres psql
-    postgres=# CREATE DATABASE clubbydb;
-    postgres=# CREATE user clubbyuser with encrypted password 'password';
-    postgres=# GRANT all privileges on database clubbydb to clubbyuser;
+    postgres=# CREATE DATABASE rpdb;
+    postgres=# CREATE user rpuser with encrypted password 'password';
+    postgres=# GRANT all privileges on database rpdb to rpuser;
 
 ## Here is how I initialized the tables
 
 Use projectname.sql instead of clubby.sql, etc.
 
-    scp -P 2222 clubby.sql localhost:
+    scp -P 2222 rp.sql localhost:
     ssh localhost -p 2222
-    psql clubbyuser -h 127.0.0.1 -d clubbydb -a -f clubby.sql
+    psql rpuser -h 127.0.0.1 -d rpdb -a -f rp.sql
 
-## If you want to log into the db as gomdenuser
+## If you want to log into the db as rpuser
 
     ssh localhost -p 2222
-    psql clubbyuser -h 127.0.0.1 -d clubbydb -a
-    clubbydb=>
+    psql rpuser -h 127.0.0.1 -d rpdb -a
+    rpdb=>
 
 And, just in case, this might come in handy:
 
-    postgres=# \connect clubbydb
+    postgres=# \connect rpdb
 
 
 ## Here is how I setup Babel
@@ -299,10 +299,10 @@ and
         "build": "source/js/*.js"
     }
 
-## Rename and edit clubby-export.sh in home directory
+## Rename and edit rp-export.sh in home directory
 
     export SECRET_KEY="..."
-    export DATABASE_URL="postgres://clubbyuser:password@localhost:5444/clubbydb"
+    export DATABASE_URL="postgres://rpuser:password@localhost:5444/rpdb"
     export FLASK_EMAIL_PASSWORD="..."
     export FLASK_EMAIL_SERVER="..."
     export ADMIN_EMAIL="..."
@@ -318,7 +318,7 @@ In one tab:
 
     . venv/bin/activate
     source export.sh
-    source ~/clubby-export.sh
+    source ~/rp-export.sh
     python3.8 -m flask run
 
 Another tab:
@@ -329,7 +329,7 @@ Another tab:
 
     . venv/bin/activate
     source export.sh
-    source ~/clubby-export.sh
+    source ~/rp-export.sh
     celery -A gomden.celery worker -l info
 
 Another tab:

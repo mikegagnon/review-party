@@ -1,5 +1,20 @@
 BEGIN TRANSACTION;
 
+CREATE TABLE "pdfs" (
+    "pdfid" BIGSERIAL PRIMARY KEY,
+    "userid" BIGINT,
+    "bits" BYTEA
+);
+
+CREATE TABLE "books" (
+    "bookid" BIGSERIAL PRIMARY KEY,
+    "userid" BIGINT,
+    "booktitle" TEXT,
+    "link1" TEXT,
+    "link2" TEXT,
+    "pdfid" BIGINT
+);
+
 CREATE TABLE "users" (
     "userid" BIGSERIAL PRIMARY KEY,
     "displayname" TEXT,

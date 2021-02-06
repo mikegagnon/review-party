@@ -1,15 +1,44 @@
 {% extends "layout.html" %}
-{% block title %}Review Party{% endblock %}
-{% block view_wikipage_active %}active{% endblock %}
-
+{% block title %}New book{% endblock %}
+{% block create_account_active %}active{% endblock %}
 {% block content %}
 
-<h1>New book</h1>
+<main role="main" class="container">
+<form action="{{ url_for('core_gomden_blueprint.newbook') }}" method="post">
 
-<p>Hi.</p>
+    {% if message %}
+      <div class="alert alert-warning" role="alert">
+        <p>{{ message }}</p>
+      </div>
+    {% endif %}
 
-{% endblock %}
+    <h1>New book</h1>
 
-{% block pastbody %}
+    <div class="mb-3">
+      <label for="username">Book title</label>
+      <div class="input-group">
+        <input type="text" class="form-control" name="booktitle" id="booktitle" placeholder="Book title" required>
+      </div>
+    </div>
 
+    <div class="mb-3">
+      <label for="email">Primary link</label>
+      <div class="input-group">
+        <input type="text" class="form-control" name="link1" id="link1" placeholder="Primary link url (optional)">
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="email">Secondary link</label>
+      <div class="input-group">
+        <input type="text" class="form-control" name="link2" id="link2" placeholder="Secondary link url (optional)">
+      </div>
+    </div>
+    
+    <div><button type="submit" class="btn btn-primary">Submit book</button></div>
+
+    {{ form.csrf_token }}
+
+</form>
+</main>
 {% endblock %}

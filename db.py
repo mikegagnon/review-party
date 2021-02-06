@@ -58,6 +58,36 @@ def toUserJson(record):
 
 
 @ErrorRollback
+def insertNewBook(userid, booktitle, link1, link2, filepdf):
+    conn = getConn()
+    c = conn.cursor()
+
+    c.execute("""
+        INSERT INTO pdfs
+        (userid, bits)
+        VALUES (%s, %s) """, (userid, filepdf))
+
+    c.execute("SELECT MAX(pdfid) FROM pdfs")
+    result = c.fetchone()
+    pdfid = result[0]
+
+    c.execute("""
+        INSERT INTO books
+        (userid, booktitle, link1, link2, pdfid)
+        VALUES (%s, %s, %s, %s, %s) """, (userid, booktitle, link1, link2, pdfid))
+
+    #result = int(c.fetchone()[0])
+    c.execute("SELECT MAX(bookid) FROM books")
+    result = c.fetchone()
+    bookid = result[0]
+    
+    c.close()
+    conn.commit()
+
+    return bookid;
+
+
+@ErrorRollback
 def getNumRegisteredUsers():
     conn = getConn()
     c = conn.cursor()

@@ -31,6 +31,15 @@ MAX_EMAIL_LEN = 254
 MIN_PASSWORD_LEN = 3
 MAX_PASSWORD_LEN = 64
 
+MIN_BOOKTITLE_LEN = 1
+MAX_BOOKTITLE_LEN = 100
+
+MIN_LINK_URL_LEN = 10
+MAX_LINK_URL_LEN = 300
+
+# https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
+LINKURL_RE = re.compile(r"^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$", re.UNICODE)
+
 MAX_TOKEN_AGE = 86400 # 24 hours
 MAX_LOGIN_TOKEN_AGE = 3600 # 1 hour
 MAX_INVITE_TOKEN_AGE = 86400 # 24 hours
@@ -40,6 +49,19 @@ DUMMY_HASH="$2b$12$iqrN79syuOte2ZHdDASDF.ASDF."
 BAD_EMAIL_MESSAGE = """Your email seems invalid."""
 SENDING_LOGIN_LINK_MESSAGE = """Sending you a link to login."""
 FORGOT_PASSWORD_MESSAGE = """Check your email for a link to reset your password. But, if you haven't yet created and confirmed your account (via the confirmation-link email), you will not receive an email."""
+
+def saneBooktitle(booktitle):
+    return (
+        len(booktitle) >= MIN_BOOKTITLE_LEN and
+        len(booktitle) <= MAX_BOOKTITLE_LEN
+    )
+
+def saneLinkUrl(link):
+    return (
+        len(link) >= MIN_LINK_URL_LEN and
+        len(link) <= MAX_LINK_URL_LEN and
+        LINKURL_RE.match(link)
+    )
 
 def saneUsername(username):
     return (

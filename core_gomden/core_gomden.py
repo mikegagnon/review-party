@@ -145,7 +145,7 @@ def existingbook(bookid):
 
     bits = book["bits"]
 
-    pages = convert_from_bytes(bits, 100, fmt="jpg")
+    pages = convert_from_bytes(bits, 200, fmt="jpg")
 
     page = pages[0]
 

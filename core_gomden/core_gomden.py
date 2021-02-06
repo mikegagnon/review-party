@@ -1,7 +1,5 @@
 # PUNT: better logging
 import base64
-#import StringIO
-#from cStringIO import StringIO
 from io import BytesIO
 from PIL import Image
 
@@ -127,16 +125,11 @@ def oldtob64(img):
 #.decode('ascii')
 
  # img = Image.open(image_path).convert('RGB')
-def tob64(image):
-    # output_buffer = BytesIO()
-    # img.save(output_buffer, format='JPEG')
-    # byte_data = output_buffer.getvalue()
-    # base64_str = base64.b64encode(byte_data)
-    # return base64_str
-    img = Image.fromBytes(image.tobytes())
-    im_bytes = BytesIO()
-    img.save(im_bytes, format="PNG")
-    return base64.b64encode(im_bytes.getvalue())
+def tob64(page):
+    buffered = BytesIO()
+    page.save(buffered, format="JPEG")
+    img_str = base64.b64encode(buffered.getvalue()).decode('ascii')
+    return img_str
 
 @core_gomden_blueprint.route("/book/<bookid>")
 def existingbook(bookid):
@@ -150,29 +143,12 @@ def existingbook(bookid):
 
     book = db.getBook(bookid)
 
-    print(len(book["bits"]))
-
     bits = book["bits"]
 
     pages = convert_from_bytes(bits, 100, fmt="jpg")
 
     page = pages[0]
 
-
-    print(page)
-
-    import base64
-    from io import BytesIO
-
-    buffered = BytesIO()
-    page.save(buffered, format="JPEG")
-    img_str = base64.b64encode(buffered.getvalue()).decode('ascii')
-    #img = ""#base64.b64encode(page) #oldtob64(page)
-    #$print([char(x) for x in  img_str[:5]])
-
-    print(img_str[:5])
-    #img = tob64(images[0])#base64.b64encode(images[0].tobytes())
-
-    #print(img)
-    return render_template("book.html", form=form, booktitle=book["booktitle"], img=img_str)
+    img = tob64(page)
+    return render_template("book.html", form=form, booktitle=book["booktitle"], img=img)
 

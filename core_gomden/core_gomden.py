@@ -49,10 +49,23 @@ class NewBookForm(FlaskForm):
     link2 = StringField("link2")
     filepdf = FileField("filepdf")
 
+class EditBookForm(FlaskForm):
+    booktitle = StringField("booktitle")
+    link1 = StringField("link1")
+    link2 = StringField("link2")
+    filepdf = FileField("filepdf")
+
 def getNewBook(userid):
 
     form = NewBookForm()
     return render_template("new-book.html", form=form)
+
+def getEditBook(userid, book):
+    form = EditBookForm()
+    booktitle = book["booktitle"]
+    link1 = book["link1"]
+    link2 = book["link2"]
+    return render_template("edit-book.html", form=form, booktitle=booktitle, link1=link1, link2=link2)
 
 ALLOWED_EXTENSIONS = ["pdf"]
 # https://flask.palletsprojects.com/en/1.1.x/patterns/fileuploads/
@@ -137,6 +150,24 @@ def postNewBook(userid):
 
     #render_template('book.html', form=form, bookid=id)
 
+@core_gomden_blueprint.route("/edit-book/<int:bookid>", methods=["GET", "POST"])
+def edit_book(bookid):
+    if "userid" not in session:
+        abort(403)
+
+    userid = session["userid"]
+
+    book = db.getBook(bookid)
+
+    if book["bookid"] != bookid:
+        abort(403)
+
+    if request.method == "GET":
+        return getEditBook(userid, book)
+    else:
+        return postEditBook(userid, book)
+
+
 
 @core_gomden_blueprint.route("/new-book", methods=["GET", "POST"])
 def newbook():
@@ -185,7 +216,9 @@ def existingbook(bookid):
 
     numpdfpages = book["numpdfpages"]
 
-    return render_template("book.html", form=form, bookid=book["bookid"], booktitle=book["booktitle"], links=links, numpdfpages=numpdfpages)
+    edit = userid == book["userid"]
+
+    return render_template("book.html", form=form, edit=edit, bookid=book["bookid"], booktitle=book["booktitle"], links=links, numpdfpages=numpdfpages)
 
 
 @core_gomden_blueprint.route('/page/<int:bookid>/<size>/<int:pagenum>.jpg')

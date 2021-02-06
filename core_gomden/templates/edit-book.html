@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+{% block title %}New book{% endblock %}
+{% block newbook_active %}active{% endblock %}
+{% block content %}
+
+<main role="main" class="container">
+<form action="{{ url_for('core_gomden_blueprint.newbook') }}" method="post" enctype=multipart/form-data>
+
+    {% if message %}
+      <div class="alert alert-warning" role="alert">
+        <p>{{ message }}</p>
+      </div>
+    {% endif %}
+
+    <h1>Edit: {{ booktitle }}</h1>
+
+    <div class="mb-3">
+      <label for="username">Book title</label>
+      <div class="input-group">
+        <input type="text" class="form-control" name="booktitle" id="booktitle" value="{{booktitle}}" required>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="email">Primary link</label>
+      <div class="input-group">
+        <input type="text" class="form-control" name="link1" id="link1" value="{{link1}}">
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="email">Secondary link</label>
+      <div class="input-group">
+        {% if link2 == '' %}
+          <input type="text" class="form-control" name="link2" id="link2" placeholder="Secondary link url (optional)">
+        {% else %}
+          <input type="text" class="form-control" name="link2" id="link2" value="{{link2}}">
+        {% endif %}
+      </div>
+    </div>
+    
+    <input type=file name="filepdf">
+
+    <div><button type="submit" class="btn btn-primary">Submit changes</button></div>
+
+    {{ form.csrf_token }}
+
+</form>
+</main>
+{% endblock %}

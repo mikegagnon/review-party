@@ -52,6 +52,10 @@
                 <a class="nav-link" href="{{ url_for('core_gomden_blueprint.mypoints') }}">Points</a>
             </li>
 
+            <li class="nav-item {% block myreviews_active %}{% endblock %}">
+                <a class="nav-link" href="{{ url_for('core_gomden_blueprint.myreviews') }}">Submitted reviews</a>
+            </li>
+
             <li class="nav-item {% block logout_active %}{% endblock %}">
               <form action="{{ url_for('account_blueprint.logout') }}" method="post">
                 

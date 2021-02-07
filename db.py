@@ -249,6 +249,38 @@ def getMyBooks(userid):
 
     return results
 
+def toMyReviewsJson(record):
+    return {
+        "reviewid": record[0],
+        "reviewtext": record[1],
+        "booktitle": record[2],
+        "bookid": record[3],
+    }
+
+
+@ErrorRollback
+def getMyReviews(userid):
+    conn = getConn()
+    c = conn.cursor()
+
+
+    c.execute("""
+        SELECT DISTINCT ON (r.bookid) r.reviewid, r.reviewtext, b.booktitle, b.bookid
+        FROM reviews r LEFT JOIN books b on b.bookid=r.bookid
+        WHERE r.userid=%s""", (userid,))
+        #ORDER BY r.reviewid DESC""", (userid,))
+
+    results = c.fetchall()
+    results = [toMyReviewsJson(record) for record in results]
+
+
+    c.close()
+    conn.commit()
+
+    return results
+
+
+
 def toAllReviewsJson(record):
     return {
         "reviewid": record[0],

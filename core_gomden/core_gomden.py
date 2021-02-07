@@ -195,6 +195,20 @@ def postNewReviewBook(userid, book):
 def reviewToParas(reviewtext):
     return list(filter(lambda x: not re.match(r"^\s+$", x), re.split(r"(\s*\n\s*)(\s*\n\s*)+",  reviewtext)))
 
+@core_gomden_blueprint.route('/myreviews')
+def myreviews():
+    if "userid" not in session:
+        abort(403)
+
+    userid = session["userid"]
+
+    reviews = db.getMyReviews(userid)
+    reviews = [revRecToParas(r) for r in reviews]
+
+    form = EmptyForm()
+
+    return render_template("my-reviews.html", form=form, reviews=reviews)
+
 @core_gomden_blueprint.route('/mypoints')
 def mypoints():
     if "userid" not in session:

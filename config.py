@@ -21,6 +21,8 @@ MAX_PDF_PAGES = 10 # page count
 MAX_PDF_WIDTH = 12  #in inches
 MAX_PDF_HEIGHT = 12 #in inches
 
+NUM_FRONT_PAGE_BOOKS = 6
+
 REVIEW_MAX_LEN = 1000
 
 # ZTODO rm

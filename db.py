@@ -256,7 +256,7 @@ def toMyReviewsJson(record):
         "booktitle": record[2],
         "bookid": record[3],
     }
-
+   
 
 @ErrorRollback
 def getMyReviews(userid):

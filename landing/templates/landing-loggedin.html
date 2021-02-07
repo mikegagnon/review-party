@@ -5,11 +5,50 @@
 
 {% block content %}
 
-<h1>Welcome back</h1>
 
-{% for book in books %}
-    <p>{{book["booktitle"]}}</p>
-{% endfor%}
+
+
+
+
+
+<main role="main" style="padding: 0px;">
+
+
+
+
+      <div class="album py-5 bg-light">
+        <div class="container">
+
+        {% for chunk in bookchunks %}
+
+          <div class="row">
+            {% for book in chunk %}
+                <div class="col-md-4">
+                  <div class="card mb-4 box-shadow">
+                    <div class="card-body">
+                        {% if book != None %}
+                            {{ book["booktitle"] }}
+                        {% else %}
+                            Your book here
+                        {% endif %}
+                    </div>
+                  </div>
+                </div>
+            {% endfor %}
+          </div>
+        {% endfor %}
+        </div>
+      </div>
+
+
+      <section class="jumbotron text-center" style="padding: 10px;">
+          <h1 style="font-weight: normal; font-size: 40pt; margin-top: 30px;">Hit refresh</h1>
+          <h2 style="font-weight: normal; font-size: 20pt; margin-top: 30px;">For more books</h2>
+      </section>
+    </main>
+
+
+
 
 {% endblock %}
 

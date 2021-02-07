@@ -27,12 +27,22 @@ def landing_loggedout():
         return redirect(url_for('account_blueprint.login'))
 
 
+# https://stackoverflow.com/questions/312443/how-do-you-split-a-list-into-evenly-sized-chunks
+def chunks(lst):
+    for i in range(0, len(lst), 3):
+        segment = lst[i:i + 3]
+        yield segment    
+
 def landing_loggedin():
     form = EmptyForm()
 
     books = db.getRandomBooks(config.NUM_FRONT_PAGE_BOOKS)
 
-    return render_template("landing-loggedin.html", form=form, books=books)
+    if len(books) < config.NUM_FRONT_PAGE_BOOKS:
+        books += [None] * (config.NUM_FRONT_PAGE_BOOKS - len(books))
+        random.shuffle(books)
+
+    return render_template("landing-loggedin.html", form=form, bookchunks=chunks(books))
 
 @landing_blueprint.route("/")
 def landing():

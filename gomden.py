@@ -64,3 +64,4 @@ mail = Mail(app)
 
 initAccount(app, send_email)
 initCore(send_email)
+

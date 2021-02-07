@@ -490,15 +490,34 @@ def getMyBooks(userid):
     conn = getConn()
     c = conn.cursor()
 
+    # result = c.fetchone()
+    # if result and result[0] != None:
+    #     sigbookid = int(result[0])
+    # else:
+    #     sigbookid = None
+
     c.execute("""
-        SELECT sigbookid
+        SELECT sigbookid, displayname
         FROM users WHERE userid=%s""", (userid,))
 
     result = c.fetchone()
-    if result and result[0] != None:
-        sigbookid = int(result[0])
+    if result:
+        displayname = result[1]
+        if result[0] != None:
+            sigbookid = int(result[0])
+            c.execute("""
+                SELECT booktitle
+                FROM books WHERE bookid=%s""", (sigbookid,))
+
+            res = c.fetchone()
+            sigbooktitle = res[0]
+        else:
+            sigbookid = None
+            sigbooktitle = None
     else:
-        sigbookid = None
+        abort(500)
+        #sigbookid = None
+        #sigbooktitle = None
 
     c.execute("""
         SELECT bookid, booktitle
@@ -535,13 +554,11 @@ def getMyBooks(userid):
             book["sig"] = True
         else:
             book["sig"] = False
-
-
             
     c.close()
     conn.commit()
 
-    return results
+    return (displayname, sigbookid, sigbooktitle, results)
 
 def toMyReviewsJson(record):
     return {

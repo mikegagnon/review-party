@@ -374,11 +374,11 @@ def getMybooks(userid):
     form = MyBooksForm()
 
 
-    books = db.getMyBooks(userid)
+    (displayname, sigbookid, sigbooktitle, books) = db.getMyBooks(userid)
 
     user = db.getConfirmedUserByUserid(userid)
 
-    return render_template("mybooks.html", form=form, books=books, user=user)
+    return render_template("mybooks.html", form=form, books=books, user=user, displayname=displayname, sigbookid=sigbookid, sigbooktitle=sigbooktitle)
 
 
 

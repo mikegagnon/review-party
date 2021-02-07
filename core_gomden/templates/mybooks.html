@@ -5,9 +5,15 @@
 <main role="main" class="container">
 
 
-    <h1>Books by {{user["displayname"]}}</h1>
+    <h1>My books</h1>
+    <p>When your reviews appear in public and private, you will be attributed as:</p>
+    {% if sigbookid != None %}
+        <p>{{displayname}}, author of <a href="{{url_for('core_gomden_blueprint.publicbookpage', bookid=sigbookid)}}">{{sigbooktitle}}</a></p>
+    {% else %}
+        <p>{{displayname}}</p>
+    {% endif %}
     <br>
-
+    
 <form action="{{ url_for('core_gomden_blueprint.mybooks', bookid=bookid) }}" method="post">
 
 

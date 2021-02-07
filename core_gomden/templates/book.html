@@ -27,19 +27,22 @@
             </div>
             </div>
 
-            {% if edit %}
             <div class="row">
             <div class="col-md-2">
             </div>
             <div class="col-md-8">
-
+            {% if edit %}
                 <a href="{{ url_for('core_gomden_blueprint.edit_book', bookid=bookid)}}" class="btn btn-primary">Edit book</a><br><br>
+            {% elif review %}
+                <p><b>Your review</b>: {{review}}</p>
+            {% else %}
+                <a href="{{ url_for('core_gomden_blueprint.review_book', bookid=bookid)}}" class="btn btn-primary">Review book</a><br><br>
+            {% endif %}
 
             </div>
             <div class="col-md-2">
             </div>
             </div>
-            {% endif %}
 
           <div class="row">
             <div class="col-md-2">

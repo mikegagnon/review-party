@@ -105,3 +105,8 @@ main {
 .small-page {
     width: 100%
 }
+
+.book-thumb {
+    border: 1px solid grey;
+    width: 100%;
+}

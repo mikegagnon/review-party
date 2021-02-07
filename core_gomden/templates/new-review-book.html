@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+{% block title %}Review book{% endblock %}
+{% block newbook_active %}active{% endblock %}
+{% block content %}
+
+<main role="main" class="container">
+<form action="{{ url_for('core_gomden_blueprint.newbook') }}" method="post" enctype=multipart/form-data>
+
+    {% if message %}
+      <div class="alert alert-warning" role="alert">
+        <p>{{ message }}</p>
+      </div>
+    {% endif %}
+
+    <h1>Review: {{booktitle}}</h1>
+
+    <div style="width: 100%">
+      <div style="float: left; width: 70%;">
+        <textarea name="reviewtext" id="reviewtext" style="padding: 10px; width: 100%; max-width: 100%;">Review goes here</textarea>
+        <!--<textarea name="reviewtext" id="reviewtext" rows="12" cols="60">-->
+      </div>
+
+      <div style="float: right; width: 20%;">
+        <img class="book-thumb" src="{{ url_for('core_gomden_blueprint.get_image', bookid=bookid, size='small', pagenum=1) }}">
+      </div>
+    </div>
+    
+    <div  >
+      <button style="margin-top: 20px" type="submit" class="btn btn-primary">Submit review</button>
+    </div>
+
+    {{ form.csrf_token }}
+
+</form>
+</main>
+{% endblock %}

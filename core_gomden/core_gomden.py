@@ -55,10 +55,18 @@ class EditBookForm(FlaskForm):
     link2 = StringField("link2")
     filepdf = FileField("filepdf")
 
-def getNewBook(userid):
+class NewReviewBookForm(FlaskForm):
+    review = StringField("review")
 
+def getNewBook(userid):
     form = NewBookForm()
     return render_template("new-book.html", form=form)
+
+def getNewReviewBook(userid, book):
+    form = NewReviewBookForm()
+    booktitle = book["booktitle"]
+    bookid = book["bookid"]
+    return render_template("new-review-book.html", form=form, booktitle=booktitle, bookid=bookid)
 
 def getEditBook(userid, book, message=None):
     form = EditBookForm()
@@ -185,6 +193,9 @@ def edit_book(bookid):
 
     book = db.getBook(bookid)
 
+    if book == None:
+        abort(404)
+
     if book["userid"] != userid:
         abort(403)
 
@@ -197,6 +208,28 @@ def edit_book(bookid):
         return postEditBook(userid, book)
 
 
+@core_gomden_blueprint.route("/review-book/<int:bookid>", methods=["GET", "POST"])
+def review_book(bookid):
+    if "userid" not in session:
+        abort(403)
+
+    userid = session["userid"]
+
+    book = db.getBook(bookid)
+
+    if book == None:
+        abort(404)
+
+    # You cannot review your own book
+    if book["userid"] == userid:
+        abort(403)
+
+    # TODO: if you've already reviewed this book
+
+    if request.method == "GET":
+        return getNewReviewBook(userid, book)
+    else:
+        return postNewReviewBook(userid, book)
 
 @core_gomden_blueprint.route("/new-book", methods=["GET", "POST"])
 def newbook():
@@ -238,6 +271,9 @@ def existingbook(bookid):
 
     book = db.getBook(bookid)
 
+    if book == None:
+        abort(404)
+
     links = [book["link1"]]
 
     if book["link2"]:
@@ -246,8 +282,9 @@ def existingbook(bookid):
     numpdfpages = book["numpdfpages"]
 
     edit = userid == book["userid"]
+    review = None
 
-    return render_template("book.html", form=form, edit=edit, bookid=book["bookid"], booktitle=book["booktitle"], links=links, numpdfpages=numpdfpages)
+    return render_template("book.html", form=form, edit=edit, bookid=book["bookid"], booktitle=book["booktitle"], links=links, numpdfpages=numpdfpages, review=review)
 
 
 @core_gomden_blueprint.route('/page/<int:bookid>/<size>/<int:pagenum>.jpg')

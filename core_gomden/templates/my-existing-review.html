@@ -8,11 +8,20 @@
 
     <h1>Review: {{booktitle}}</h1>
 
-    {% for p in paras %}
 
-      <p>{{p}}</p>
+    <div style="width: 100%">
+      <div style="float: left; width: 70%;">
+        {% for p in paras %}
 
-    {% endfor %}
+          <p>{{p}}</p>
+
+        {% endfor %}
+      </div>
+
+      <div style="float: right; width: 20%;">
+        <img class="book-thumb" src="{{ url_for('core_gomden_blueprint.get_image', bookid=bookid, size='small', pagenum=1) }}">
+      </div>
+    </div>
 
 </main>
 

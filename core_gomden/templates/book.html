@@ -15,6 +15,10 @@
       <div class="album py-5 bg-light">
         <div class="container">
 
+            <div style="float: left; width: 70%;">
+
+                  
+
             <div class="row">
             <div class="col-md-2">
             </div>
@@ -26,6 +30,8 @@
             <div class="col-md-2">
             </div>
             </div>
+
+
 
             <div class="row">
             <div class="col-md-2">
@@ -57,6 +63,41 @@
             </div>
 
           </div>
+
+
+
+          
+
+            <div class="row">   
+            <div class="col-md-2">
+            </div>
+            <div class="col-md-8">
+
+                <p>{{reviews|length}} {{ 'review' if reviews|length == 1 else 'reviews'}}</p>
+
+            </div>
+            <div class="col-md-2">
+            </div>
+            </div>
+
+            {% for r in reviews %}
+
+            <div class="row">
+            <div class="col-md-2">
+            </div>
+            <div class="col-md-8" style="border: 1px solid lightgrey;">
+                <p style="margin-top: 10px;"><b>Review from {{r["displayname"]}}</b></p>
+
+                {% for p in r["paras"] %}
+
+                          <p>{{p}}</p>
+
+                {% endfor %}
+            </div>
+            <div class="col-md-2">
+            </div>
+            </div>
+            {% endfor %}
 
 {% for p in range(numpdfpages) %}
 

@@ -191,6 +191,10 @@ def postNewReviewBook(userid, book):
     return redirect(url_for('core_gomden_blueprint.existing_review_book',bookid=bookid))
     #return render_template("view-review-book.html", message=None, reviewtext=reviewtext, maxlength=maxlength, form=form, booktitle=booktitle, bookid=bookid)
 
+def reviewToParas(reviewtext):
+    return list(filter(lambda x: not re.match(r"^\s+$", x), re.split(r"(\s*\n\s*)(\s*\n\s*)+",  reviewtext)))
+
+
 # For reviewers to see their own reviews
 @core_gomden_blueprint.route('/myreview/<int:bookid>')
 def existing_review_book(bookid):
@@ -218,7 +222,8 @@ def existing_review_book(bookid):
     booktitle = book["booktitle"]
 
     # Split into paragraphs
-    paras =  list(filter(lambda x: not re.match(r"^\s+$", x), re.split(r"(\s*\n\s*)(\s*\n\s*)+",  reviewtext)))
+    paras = reviewToParas(reviewtext)
+
 
     form = EmptyForm()
 
@@ -342,6 +347,10 @@ def tob64(page):
     img_str = base64.b64encode(buffered.getvalue()).decode('ascii')
     return img_str
 
+def revRecToParas(rec):
+    rec["paras"] = reviewToParas(rec["reviewtext"])
+    return rec
+
 @core_gomden_blueprint.route("/book/<bookid>")
 def existingbook(bookid):
 
@@ -357,6 +366,12 @@ def existingbook(bookid):
     if book == None:
         abort(404)
 
+    if userid == book["userid"]:
+        reviews = db.getAllReviews(book["bookid"])
+        reviews = [revRecToParas(r) for r in reviews]
+    else:
+        reviews = []
+
     links = [book["link1"]]
 
     if book["link2"]:
@@ -367,7 +382,7 @@ def existingbook(bookid):
     edit = userid == book["userid"]
     review = None
 
-    return render_template("book.html", form=form, edit=edit, bookid=book["bookid"], booktitle=book["booktitle"], links=links, numpdfpages=numpdfpages, review=review)
+    return render_template("book.html", reviews=reviews, form=form, edit=edit, bookid=book["bookid"], booktitle=book["booktitle"], links=links, numpdfpages=numpdfpages, review=review)
 
 
 @core_gomden_blueprint.route('/page/<int:bookid>/<size>/<int:pagenum>.jpg')

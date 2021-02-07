@@ -66,7 +66,8 @@ def getNewReviewBook(userid, book):
     form = NewReviewBookForm()
     booktitle = book["booktitle"]
     bookid = book["bookid"]
-    return render_template("new-review-book.html", form=form, booktitle=booktitle, bookid=bookid)
+    maxlength = config.REVIEW_MAX_LEN
+    return render_template("new-review-book.html", maxlength=maxlength, form=form, booktitle=booktitle, bookid=bookid)
 
 def getEditBook(userid, book, message=None):
     form = EditBookForm()
@@ -160,13 +161,23 @@ def postNewBook(userid):
     result = checkBookPost(form)
     if len(result) == 1:
         message = result[0]
-        return render_template(template, bookid=bookid, form=form, message=message)
+        return render_template("new-book.html", bookid=bookid, form=form, message=message)
     
     [booktitle, link1, link2, smallbytes, largebytes] = result
     
     bookid = db.insertNewBook(userid, booktitle, link1, link2, smallbytes, largebytes)
 
     return redirect(url_for('core_gomden_blueprint.existingbook', bookid=bookid))
+
+def postNewReviewBook(userid, book):
+    form = NewReviewBookForm()
+
+
+
+    bookid = db.insertNewBook(userid, booktitle, link1, link2, smallbytes, largebytes)
+
+    return redirect(url_for('core_gomden_blueprint.existingbook', bookid=bookid))
+
 
 def postEditBook(userid, book):
     form = NewBookForm()

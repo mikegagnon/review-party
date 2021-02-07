@@ -21,6 +21,8 @@ MAX_PDF_PAGES = 10 # page count
 MAX_PDF_WIDTH = 12  #in inches
 MAX_PDF_HEIGHT = 12 #in inches
 
+REVIEW_MAX_LEN = 3#1000
+
 # ZTODO rm
 CODE_LEN = 3
 

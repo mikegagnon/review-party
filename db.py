@@ -466,6 +466,16 @@ def getMyBooks(userid):
     c = conn.cursor()
 
     c.execute("""
+        SELECT sigbookid
+        FROM users WHERE userid=%s""", (userid,))
+
+    result = c.fetchone()
+    if result and result[0] != None:
+        sigbookid = int(result[0])
+    else:
+        sigbookid = None
+
+    c.execute("""
         SELECT bookid, booktitle
         FROM books WHERE userid=%s
         ORDER BY bookid DESC""", (userid,))
@@ -495,6 +505,11 @@ def getMyBooks(userid):
             book["numpublicreviews"] = int(result[0])
         else:
             book["numpublicreviews"] = 0
+
+        if int(book["bookid"]) == sigbookid:
+            book["sig"] = True
+        else:
+            book["sig"] = False
 
 
             

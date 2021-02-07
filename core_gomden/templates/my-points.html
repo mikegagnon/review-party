@@ -20,8 +20,15 @@
     
     <p></p>
 
+    <p>There {{ 'is' if numTotalBooks == 1 else 'are'}} {{numTotalBooks}} {{ 'book' if numTotalBooks == 1 else 'books'}} in the system, total.</p>
+
+    <p>There {{ 'is' if numTotalReviews == 1 else 'are'}} {{numTotalReviews}} {{ 'review' if numTotalReviews == 1 else 'reviews'}} in the system, total.</p>
 
 
+    {% set totalpoints = numTotalBooks +  numTotalReviews %}
+
+
+    <p>Therefore, there {{ 'is' if totalpoints == 1 else 'are'}} {{totalpoints}} {{ 'point' if totalpoints == 1 else 'points'}} in the system, total.</p>
 
 </main>
 {% endblock %}

@@ -171,20 +171,9 @@ def calcPoints(userid):
     else:
         numTotalBooks = 0
 
-    
-    #c.execute("""
-    #SELECT DISTINCT bookid, reviewid
-    #FROM reviews WHERE userid=%s""", (userid,))
-    
     c.execute("""
     SELECT COUNT(DISTINCT(bookid))
     FROM reviews WHERE userid=%s""", (userid,))
-
-    #c.execute("""
-    #    SELECT COUNT(DISTINCT(CONCAT(bookd)))
-    #""", (userid,))
-
-
 
     result = c.fetchone()
     if result:
@@ -194,8 +183,8 @@ def calcPoints(userid):
         numReviews = 0
 
     c.execute("""
-    SELECT COUNT(reviewid)
-    FROM reviews WHERE userid=%s""", (userid,))
+    SELECT COUNT(DISTINCT(CONCAT(bookid,userid)))
+    FROM reviews""")
     result = c.fetchone()
     if result:
         numTotalReviews = int(result[0])

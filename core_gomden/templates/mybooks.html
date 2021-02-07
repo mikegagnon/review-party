@@ -15,9 +15,9 @@
 
             <h2>{{book["booktitle"]}}</h2>
             
-            <p1><a href="{{ url_for('core_gomden_blueprint.existingbook', bookid=book['bookid']) }}">{{book["numreviews"]}} public/private {{ 'review' if book["numreviews"] == 1 else 'reviews'}}</a></p>
+            <p1><a href="{{ url_for('core_gomden_blueprint.existingbook', bookid=book['bookid']) }}">Edit book and/or view {{book["numreviews"]}} public/private {{ 'review' if book["numreviews"] == 1 else 'reviews'}}</a></p>
         
-            <p1><a href="{{ url_for('core_gomden_blueprint.publicbookpage', bookid=book['bookid']) }}">{{book["numpublicreviews"]}} public {{ 'review' if book["numpublicreviews"] == 1 else 'reviews'}}</a></p>
+            <p1><a href="{{ url_for('core_gomden_blueprint.publicbookpage', bookid=book['bookid']) }}">Public book page with {{book["numpublicreviews"]}} public {{ 'review' if book["numpublicreviews"] == 1 else 'reviews'}}</a></p>
 
             <br>
 

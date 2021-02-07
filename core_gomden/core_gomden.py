@@ -418,7 +418,9 @@ def postExistingBook(userid, bookid):
     else:
         abort(500)
 
-    return getExistingBook(userid, bookid)
+    #return getExistingBook(userid, bookid)
+    return redirect(url_for('core_gomden_blueprint.existingbook', bookid=bookid))
+
         #return "make public " + request.form["make-public"]
 
     

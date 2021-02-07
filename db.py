@@ -66,21 +66,16 @@ def toBookJson(record):
         "numpdfpages": record[5]
     }
 
-def toRbookJson(record):
-    return {
-        "bookid": record[0],
-        "userid": record[1],
-        "booktitle": record[2],
-        "points": record[3],
-    }
+def doGetRandomBooks(books, maxBooks):
+    #numBooks = len(books)
 
-def doGetRandomBooks(books):
-    numBooks = len(books)
+    numBooks = min(len(books), maxBooks)
 
     if numBooks == 0:
         return []
 
     random.shuffle(books)
+    print(books)
     totalPoints = sum([b["points"] for b in books])
 
     selected = []
@@ -124,7 +119,7 @@ def doGetRandomBooks(books):
     return selected
 
 def test0():
-    result = doGetRandomBooks([])
+    result = doGetRandomBooks([], 5)
     if len(result) != 0:
         raise Exception("test0 fail")
 
@@ -132,7 +127,7 @@ def test1():
     books = [{"points": 4.7, "bookid": 1}]
 
     for _ in range(0, 100):
-        result = doGetRandomBooks(books)
+        result = doGetRandomBooks(books, 5)
         if len(result) != 1:
             raise Exception("test1 fail")
         if result[0]["bookid"] != 1:
@@ -148,7 +143,7 @@ def test2():
     num1 = 0.0
     num2 = 0.0
     for _ in range(0, iterations):
-        result = doGetRandomBooks(books)
+        result = doGetRandomBooks(books, 5)
         if len(result) != 2:
             raise Exception("test2 fail")
         if result[0]["bookid"] == 1:
@@ -180,7 +175,7 @@ def test3():
     # probability when book 1 is in ith slot
     slots = [0.0, 0.0, 0.0]
     for _ in range(0, iterations):
-        result = doGetRandomBooks(books)
+        result = doGetRandomBooks(books, 5)
         if len(result) != 3:
             raise Exception("test3 fail")
         if result[0]["bookid"] == 1:
@@ -243,14 +238,23 @@ def testDoGetRandomBooks():
 #testDoGetRandomBooks()
 
 
+def toRbookJson(record):
+    print(record)
+    return {
+        "bookid": record[0],
+        "userid": record[1],
+        "booktitle": record[2],
+        "points": record[3],
+    }
+
 @ErrorRollback
-def getRandomBooks(numBooks):
+def getRandomBooks(maxBooks):
     conn = getConn()
     c = conn.cursor()
     c.execute("""
         SELECT b.bookid, b.userid, b.booktitle, u.points
-        FROM books b LEFT JOIN users u on b.userid=r.bookid
-        """, (bookid,))
+        FROM books b LEFT JOIN users u on b.userid=u.userid
+        """)
     results = c.fetchall()
 
     if results == None:
@@ -258,7 +262,7 @@ def getRandomBooks(numBooks):
 
     books = [toRbookJson(r) for r in results]
 
-    return  doGetRandomBooks(books)
+    return  doGetRandomBooks(books, maxBooks)
 
 
 

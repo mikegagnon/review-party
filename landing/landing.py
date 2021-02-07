@@ -29,7 +29,10 @@ def landing_loggedout():
 
 def landing_loggedin():
     form = EmptyForm()
-    return render_template("landing-loggedin.html", form=form)
+
+    books = db.getRandomBooks(config.NUM_FRONT_PAGE_BOOKS)
+
+    return render_template("landing-loggedin.html", form=form, books=books)
 
 @landing_blueprint.route("/")
 def landing():

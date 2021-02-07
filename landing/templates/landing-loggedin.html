@@ -7,7 +7,9 @@
 
 <h1>Welcome back</h1>
 
-<p>Hi.</p>
+{% for book in books %}
+    <p>{{book["booktitle"]}}</p>
+{% endfor%}
 
 {% endblock %}
 

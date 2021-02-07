@@ -483,6 +483,20 @@ def getMyBooks(userid):
             book["numreviews"] = int(result[0])
         else:
             book["numreviews"] = 0
+
+        c.execute("""
+        SELECT COUNT (DISTINCT r.userid)
+        FROM reviews r
+        LEFT JOIN reviewperms rp ON rp.bookid=r.bookid AND rp.userid=r.userid
+        WHERE r.bookid=%s AND rp.perm='PUBLIC' """, (book["bookid"],))
+
+        result = c.fetchone()
+        if result:
+            book["numpublicreviews"] = int(result[0])
+        else:
+            book["numpublicreviews"] = 0
+
+
             
     c.close()
     conn.commit()
@@ -506,7 +520,7 @@ def getMyReviews(userid):
 
     c.execute("""
         SELECT r.reviewid, r.reviewtext, b.booktitle, b.bookid
-        FROM reviews r LEFT JOIN books b on b.bookid=r.bookid
+        FROM reviews r LEFT JOIN books b ON b.bookid=r.bookid
         WHERE r.userid=%s
         ORDER BY r.reviewid DESC""", (userid,))
         #ORDER BY r.reviewid DESC""", (userid,))

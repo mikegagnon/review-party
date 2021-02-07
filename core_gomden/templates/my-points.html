@@ -14,7 +14,7 @@
 
     {% if numBooks > 0 %}
 
-        <p>Dividing your points by your number of books ({{numReviews + numBooks}}/{{numBooks}}), therefore each of your books has earned {{(numReviews + numBooks) / numBooks}} {{ 'point' if (numReviews + numBooks) / numBooks == False else 'points'}}.</p>
+        <p>Dividing your points by your number of books ({{numReviews + numBooks}}/{{numBooks}}), therefore each of your books has earned {{'%0.2f' % ((numReviews + numBooks) / numBooks)}} {{ 'point' if (numReviews + numBooks) / numBooks == False else 'points'}}.</p>
     {% endif %}
 
     

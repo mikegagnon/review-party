@@ -354,6 +354,7 @@ def mybooks():
     return render_template("mybooks.html", form=form, books=books, user=user)
 
 
+
 @core_gomden_blueprint.route("/new-book", methods=["GET", "POST"])
 def newbook():
     if "userid" not in session:
@@ -386,7 +387,30 @@ def revRecToParas(rec):
     rec["paras"] = reviewToParas(rec["reviewtext"])
     return rec
 
-@core_gomden_blueprint.route("/book/<bookid>", methods=["GET", "POST"])
+
+@core_gomden_blueprint.route("/book/<int:bookid>", methods=["GET"])
+def publicbookpage(bookid):
+    form = EmptyForm()
+
+    book = db.getBook(bookid)
+
+    if book == None:
+        abort(404)
+
+    reviews = db.getPublicReviews(book["bookid"])
+    reviews = [revRecToParas(r) for r in reviews]
+
+    links = [book["link1"]]
+
+    numpdfpages = 1
+
+    edit = False
+    review = None
+
+    return render_template("public-book-page.html", reviews=reviews, form=form, edit=edit, bookid=book["bookid"], booktitle=book["booktitle"], links=links, numpdfpages=numpdfpages, review=review)
+
+
+@core_gomden_blueprint.route("/club-members-only/book/<bookid>", methods=["GET", "POST"])
 def existingbook(bookid):
 
     if "userid" not in session:

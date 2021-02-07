@@ -1,0 +1,113 @@
+{% extends "layout.html" %}
+{% block title %}Book{% endblock %}
+{% block create_account_active %}active{% endblock %}
+{% block content %}
+
+<main role="main" class="container">
+
+    
+
+
+<form action="{{ url_for('core_gomden_blueprint.existingbook', bookid=bookid) }}" method="post">
+
+
+
+      <div class="album py-5 bg-light">
+        <div class="container">
+
+            <div style="float: left; width: 70%;">
+
+                  
+
+            <div class="row">
+            <div class="col-md-2">
+            </div>
+            <div class="col-md-8">
+
+                <h1>{{booktitle}}</h1><br>
+
+            </div>
+            <div class="col-md-2">
+            </div>
+            </div>
+
+
+
+          <div class="row">
+            <div class="col-md-2">
+            </div>
+            <div class="col-md-8">
+
+                {% for link in links %}
+                    <p><a href="{{link}}">{{link}}</a></p>
+                {% endfor %}
+            </div>
+            <div class="col-md-2">
+            </div>
+
+          </div>
+
+
+
+          
+
+            
+
+          <div class="row">
+            <div class="col-md-2">
+            </div>
+            <div class="col-md-8">
+
+                    <a href="{{url_for('core_gomden_blueprint.get_image', bookid=bookid, size='large', pagenum=1)}}"><img style="width: 100%" src="{{ url_for('core_gomden_blueprint.get_image', bookid=bookid, size='small', pagenum=1) }}"></a>
+            </div>
+            <div class="col-md-2">
+            </div>
+
+          </div>
+
+          <div class="row">   
+            <div class="col-md-2">
+            </div>
+            <div class="col-md-8">
+                <br><br>
+
+                <p>{{reviews|length}} public {{ 'review' if reviews|length == 1 else 'reviews'}}</p>
+
+            </div>
+            <div class="col-md-2">
+            </div>
+            </div>
+
+            {% for r in reviews %}
+
+            
+
+
+            <div class="row" style='margin-bottom: 20px; color: black;'>
+            <div class="col-md-2">
+            </div>
+            <div class="col-md-8">
+                <p style="margin-top: 10px;"><b>Review from {{r["displayname"]}}</b></p>
+
+                
+
+                {% for p in r["paras"] %}
+
+                          <p>{{p}}</p>
+
+                {% endfor %}
+            </div>
+            <div class="col-md-2">
+            </div>
+            </div>
+            {% endfor %}
+
+        </div>
+      </div>
+    </div>
+
+{{ form.csrf_token }}
+
+</form>
+</main>
+{% endblock %}

@@ -574,6 +574,25 @@ def getAllReviews(bookid):
 
     return results
 
+def getPublicReviews(bookid):
+    conn = getConn()
+    c = conn.cursor()
+
+    c.execute("""
+        SELECT DISTINCT ON (r.userid) r.reviewid, r.reviewtext, r.userid, u.displayname, rp.perm
+        FROM reviews r
+        LEFT JOIN users u on u.userid=r.userid
+        LEFT JOIN reviewperms rp on rp.userid=r.userid AND rp.bookid=r.bookid
+        WHERE r.bookid=%s AND rp.perm='PUBLIC' """, (bookid,))
+
+    results = c.fetchall()
+    results = [toAllReviewsJson(record) for record in results]
+
+    c.close()
+    conn.commit()
+
+    return results
+
 
 @ErrorRollback
 def getReview(userid, bookid):

@@ -265,19 +265,29 @@ def getMyReviews(userid):
 
 
     c.execute("""
-        SELECT DISTINCT ON (r.bookid) r.reviewid, r.reviewtext, b.booktitle, b.bookid
+        SELECT r.reviewid, r.reviewtext, b.booktitle, b.bookid
         FROM reviews r LEFT JOIN books b on b.bookid=r.bookid
-        WHERE r.userid=%s""", (userid,))
+        WHERE r.userid=%s
+        ORDER BY r.reviewid DESC""", (userid,))
         #ORDER BY r.reviewid DESC""", (userid,))
 
     results = c.fetchall()
+
+    #results = filter(lambda r: , results)
     results = [toMyReviewsJson(record) for record in results]
+
+    reviewids = set([])
+    reviews = []
+    for r in results:
+        if r["bookid"] not in reviewids:
+            reviewids.add(r["bookid"])
+            reviews.append(r)
 
 
     c.close()
     conn.commit()
 
-    return results
+    return reviews
 
 
 

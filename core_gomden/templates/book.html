@@ -91,7 +91,11 @@
             <div class="col-md-2">
             </div>
             <div class="col-md-8" style="border: 1px solid {{ bordercolor }};">
-                <p style="margin-top: 10px;"><b>Review from {{r["displayname"]}}</b></p>
+                <p style="margin-top: 10px;"><b>Review from {{r["displayname"]}}{% if r["sigbookid"] != None %},
+
+                    author of <a href="{{url_for('core_gomden_blueprint.publicbookpage', bookid=r['sigbookid'])}}">{{r["sigbooktitle"]}}</a>
+                {% endif %}
+                </b></p>
 
                 
 

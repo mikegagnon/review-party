@@ -591,7 +591,9 @@ def toAllReviewsJson(record):
         "reviewtext": record[1],
         "userid": record[2],
         "displayname": record[3],
-        "perm": record[4]
+        "perm": record[4],
+        "sigbookid": record[5],
+        "sigbooktitle": record[6]
     }
 
 def getAllReviews(bookid):
@@ -600,10 +602,11 @@ def getAllReviews(bookid):
     c = conn.cursor()
 
     c.execute("""
-        SELECT DISTINCT ON (r.userid) r.reviewid, r.reviewtext, r.userid, u.displayname, rp.perm
+        SELECT DISTINCT ON (r.userid) r.reviewid, r.reviewtext, r.userid, u.displayname, rp.perm, u.sigbookid, b.booktitle
         FROM reviews r
         LEFT JOIN users u on u.userid=r.userid
         LEFT JOIN reviewperms rp on rp.userid=r.userid AND rp.bookid=r.bookid
+        LEFT JOIN books b on u.sigbookid=b.bookid
         WHERE r.bookid=%s""", (bookid,))
 
     results = c.fetchall()

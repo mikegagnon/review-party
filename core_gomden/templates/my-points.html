@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+{% block title %}My books{% endblock %}
+{% block mypoints_active %}active{% endblock %}
+{% block content %}
+<main role="main" class="container">
+
+
+    <h1>My points</h1>
+
+    <p>{{numBooks}} {{ 'point' if numBooks == 1 else 'points'}} for {{numBooks}} {{ 'book' if numBooks == 1 else 'books'}}.</p>
+
+    <p>{{numReviews}} {{ 'point' if numReviews == 1 else 'points'}} for {{numReviews}} {{ 'review' if numReviews == 1 else 'reviews'}}.</p>
+    <p>You therefore have {{numReviews + numBooks}} {{ 'point' if (numReviews + numBooks) == 1 else 'points'}}, in total.</p>
+
+    {% if numBooks > 0 %}
+
+        <p>Dividing your points by your number of books ({{numReviews + numBooks}}/{{numBooks}}), therefore each of your books has earned {{(numReviews + numBooks) / numBooks}} {{ 'point' if (numReviews + numBooks) / numBooks == False else 'points'}}.</p>
+    {% endif %}
+
+    
+    <p></p>
+
+
+
+
+</main>
+{% endblock %}

@@ -147,6 +147,59 @@ def updateBook(bookid, userid, booktitle, link1, link2, smallpages, largepages):
     return True;
 
 @ErrorRollback
+def calcPoints(userid):
+    conn = getConn()
+    c = conn.cursor()
+
+    c.execute("""
+        SELECT COUNT(bookid)
+        FROM books WHERE userid=%s""", (userid,))
+
+    result = c.fetchone()
+    if result:
+        numBooks = int(result[0])
+    else:
+        numBooks = 0
+
+    c.execute("""
+        SELECT COUNT(bookid)
+        FROM books""")
+
+    result = c.fetchone()
+    if result:
+        numTotalBooks = int(result[0])
+    else:
+        numTotalBooks = 0
+
+    c.execute("""
+    SELECT COUNT(reviewid)
+    FROM reviews WHERE userid=%s""", (userid,))
+    result = c.fetchone()
+    if result:
+        numReviews = int(result[0])
+    else:
+        numReviews = 0
+
+    c.execute("""
+    SELECT COUNT(reviewid)
+    FROM reviews WHERE userid=%s""", (userid,))
+    result = c.fetchone()
+    if result:
+        numTotalReviews = int(result[0])
+    else:
+        numTotalReviews = 0
+
+    c.close()
+    conn.commit()
+
+    return {
+        "numBooks": numBooks,
+        "numReviews": numReviews,
+        "numTotalBooks": numTotalBooks,
+        "numTotalReviews": numTotalReviews
+    }
+
+@ErrorRollback
 def insertNewReviewBook(userid, bookid, reviewtext):
     conn = getConn()
     c = conn.cursor()

@@ -78,6 +78,7 @@ def getEditBook(userid, book, message=None):
     bookid = book["bookid"]
     return render_template("edit-book.html", form=form, bookid=bookid, booktitle=booktitle, link1=link1, link2=link2, message=message)
 
+
 ALLOWED_EXTENSIONS = ["pdf"]
 # https://flask.palletsprojects.com/en/1.1.x/patterns/fileuploads/
 def allowed_file(filename):
@@ -193,6 +194,26 @@ def postNewReviewBook(userid, book):
 
 def reviewToParas(reviewtext):
     return list(filter(lambda x: not re.match(r"^\s+$", x), re.split(r"(\s*\n\s*)(\s*\n\s*)+",  reviewtext)))
+
+@core_gomden_blueprint.route('/mypoints')
+def mypoints():
+    if "userid" not in session:
+        abort(403)
+
+    userid = session["userid"]
+
+    points = db.calcPoints(userid)
+
+    numBooks = points["numBooks"]
+    numReviews = points["numReviews"]
+    numTotalBooks = points["numTotalBooks"]
+    numTotalReviews = points["numTotalReviews"]
+
+    form = EmptyForm()
+
+    return render_template("my-points.html", form=form, numBooks=numBooks, numReviews=numReviews, numTotalBooks=numTotalBooks, numTotalReviews=numTotalReviews)
+
+    
 
 
 # For reviewers to see their own reviews

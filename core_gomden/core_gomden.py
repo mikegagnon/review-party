@@ -338,14 +338,41 @@ def review_book(bookid):
     else:
         return postNewReviewBook(userid, book)
 
-@core_gomden_blueprint.route("/mybooks", methods=["GET"])
+class MyBooksForm(FlaskForm):
+    bookid = StringField("bookid")
+
+@core_gomden_blueprint.route("/mybooks", methods=["GET", "POST"])
 def mybooks():
     if "userid" not in session:
         abort(403)
 
-    form = EmptyForm()
-
     userid = session["userid"]
+
+    if request.method == "GET":
+        return getMybooks(userid)
+    else:
+        return postMybooks(userid)
+
+def postMybooks(userid):
+
+    form = MyBooksForm()
+
+    if "add-sig" in request.form:
+        # passes userid of visitor
+        db.addSig(userid,request.form["add-sig"])
+    elif "remove-sig" in request.form:
+        db.removeSig(userid, request.form["remove-sig"])
+    else:
+        abort(500)
+
+    return redirect(url_for('core_gomden_blueprint.mybooks'))
+    
+
+def getMybooks(userid):
+
+
+    form = MyBooksForm()
+
 
     books = db.getMyBooks(userid)
 

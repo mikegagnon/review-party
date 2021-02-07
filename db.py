@@ -461,6 +461,31 @@ def toMyBookJson(record):
     }
 
 @ErrorRollback
+def addSig(userid, bookid):
+    conn = getConn()
+    c = conn.cursor()
+
+    c.execute("""
+        UPDATE users SET sigbookid=%s WHERE userid=%s;
+        """, (bookid, userid))
+
+    c.close()
+    conn.commit()
+
+@ErrorRollback
+def removeSig(userid, bookid):
+    conn = getConn()
+    c = conn.cursor()
+
+    c.execute("""
+        UPDATE users SET sigbookid=%s WHERE userid=%s;
+        """, (None, userid))
+
+    c.close()
+    conn.commit()
+
+    
+@ErrorRollback
 def getMyBooks(userid):
     conn = getConn()
     c = conn.cursor()

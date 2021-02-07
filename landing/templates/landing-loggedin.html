@@ -27,9 +27,14 @@
                   <div class="card mb-4 box-shadow">
                     <div class="card-body">
                         {% if book != None %}
-                            {{ book["booktitle"] }}
+                            <!--{{ book["booktitle"] }}-->
+                            <a href="{{ url_for('core_gomden_blueprint.existingbook', bookid=book['bookid']) }}">
+                                <img style="width: 100%" src="{{ url_for('core_gomden_blueprint.get_image', bookid=book['bookid'], size='small', pagenum=1) }}">
+                            </a>
+
+
                         {% else %}
-                            Your book here
+                            <img style="width: 100%" src="{{ url_for('static', filename='layout/img/here.png')}}">
                         {% endif %}
                     </div>
                   </div>

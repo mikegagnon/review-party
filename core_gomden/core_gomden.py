@@ -405,24 +405,15 @@ class ExistingBookForm(FlaskForm):
 def postExistingBook(userid, bookid):
     form = ExistingBookForm()
 
-    print("asdf1", request.form)
-
     if "make-public" in request.form:
-
-        print("asdf2")        # passes userid of visitor
+        # passes userid of visitor
         db.makeReviewPublicPrivate(userid, bookid, request.form["make-public"], True)
     elif "make-private" in request.form:
-        
-        print("asdf3")
         db.makeReviewPublicPrivate(userid, bookid, request.form["make-private"], False)
     else:
         abort(500)
 
-    #return getExistingBook(userid, bookid)
     return redirect(url_for('core_gomden_blueprint.existingbook', bookid=bookid))
-
-        #return "make public " + request.form["make-public"]
-
     
 def getExistingBook(userid, bookid):
 

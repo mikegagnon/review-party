@@ -14,9 +14,12 @@
 
     <h1>Review: {{booktitle}}</h1>
 
+    <div style="width: 10-0%">
+      <button style="margin-bottom: 20px" type="submit" class="btn btn-primary">Submit review</button>
+    </div>
     <div style="width: 100%">
       <div style="float: left; width: 70%;">
-        <textarea onkeyup="countChar(this)" placeholder="Review goes here" maxlength="{{maxlength}}" name="reviewtext" id="reviewtext" style="padding: 10px; width: 100%; max-width: 100%;">{{reviewtext}}</textarea>
+        <textarea rows=15 onkeyup="countChar(this)" placeholder="Review goes here" maxlength="{{maxlength}}" name="reviewtext" id="reviewtext" style="padding: 10px; width: 100%; max-width: 100%;">{{reviewtext}}</textarea>
         <!--<textarea name="reviewtext" id="reviewtext" rows="12" cols="60">-->
           <br>
           <div id="charNum" style="margin-top: 5px; color: grey;">Remaining characters: {{maxlength}}</div>
@@ -27,9 +30,7 @@
       </div>
     </div>
     
-    <div >
-      <button style="margin-top: 20px" type="submit" class="btn btn-primary">Submit review</button>
-    </div>
+    
 
     {{ form.csrf_token }}
 

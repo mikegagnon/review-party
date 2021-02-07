@@ -7,6 +7,13 @@ CREATE TABLE "reviews" (
     "reviewtext" TEXT
 );
 
+CREATE TABLE "reviewperms" (
+    "reviewpermid" BIGSERIAL PRIMARY KEY,
+    "userid" BIGINT,
+    "bookid" BIGINT,
+    "perm" TEXT /* either PUBLIC or *empty*, which signifies private */
+);
+
 CREATE TABLE "pdfimgs" (
     "pdfimgid" BIGSERIAL PRIMARY KEY,
     "userid" BIGINT,

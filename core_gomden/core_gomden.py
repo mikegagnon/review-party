@@ -386,7 +386,7 @@ def revRecToParas(rec):
     rec["paras"] = reviewToParas(rec["reviewtext"])
     return rec
 
-@core_gomden_blueprint.route("/book/<bookid>")
+@core_gomden_blueprint.route("/book/<bookid>", methods=["GET", "POST"])
 def existingbook(bookid):
 
     if "userid" not in session:
@@ -394,7 +394,25 @@ def existingbook(bookid):
 
     userid = session["userid"]
 
-    form = EmptyForm()
+    if request.method == "GET":
+        return getExistingBook(userid, bookid)
+    else:
+        return postExistingBook(userid, bookid)
+
+class ExistingBookForm(FlaskForm):
+    bookid = StringField("bookid")
+
+def postExistingBook(userid, bookid):
+    form = ExistingBookForm()
+
+    if "make-public" in request.form:
+        return "make public " + request.form["make-public"]
+    
+    abort(500)
+
+def getExistingBook(userid, bookid):
+
+    form = ExistingBookForm()
 
     book = db.getBook(bookid)
 

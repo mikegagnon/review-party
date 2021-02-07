@@ -159,6 +159,32 @@ def insertNewReviewBook(userid, bookid, reviewtext):
     c.close()
     conn.commit()
 
+def toMyBookJson(record):
+    return {
+        "bookid": record[0],
+        "booktitle": record[1]
+    }
+
+@ErrorRollback
+def getMyBooks(userid):
+    conn = getConn()
+    c = conn.cursor()
+
+    c.execute("""
+        SELECT bookid, booktitle
+        FROM books WHERE userid=%s
+        ORDER BY bookid DESC""", (userid,))
+
+    results = c.fetchall()
+    results = [toMyBookJson(record) for record in results]
+
+    c.close()
+    conn.commit()
+
+    return results
+
+
+
 @ErrorRollback
 def getReview(userid, bookid):
     conn = getConn()

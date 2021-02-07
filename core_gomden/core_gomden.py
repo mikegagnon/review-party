@@ -298,6 +298,22 @@ def review_book(bookid):
     else:
         return postNewReviewBook(userid, book)
 
+@core_gomden_blueprint.route("/mybooks", methods=["GET"])
+def mybooks():
+    if "userid" not in session:
+        abort(403)
+
+    form = EmptyForm()
+
+    userid = session["userid"]
+
+    books = db.getMyBooks(userid)
+
+    user = db.getConfirmedUserByUserid(userid)
+
+    return render_template("mybooks.html", form=form, books=books, user=user)
+
+
 @core_gomden_blueprint.route("/new-book", methods=["GET", "POST"])
 def newbook():
     if "userid" not in session:

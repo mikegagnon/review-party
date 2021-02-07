@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+{% block title %}My books{% endblock %}
+{% block mybooks_active %}active{% endblock %}
+{% block content %}
+<main role="main" class="container">
+
+
+    <h1>Books by {{user["displayname"]}}</h1>
+
+
+    <div style="width: 100%">
+      <div style="float: left; width: 70%;">
+        {% for book in books %}
+
+          <p>{{book["booktitle"]}}</p>
+
+        {% endfor %}
+      </div>
+
+    </div>
+
+
+</main>
+{% endblock %}

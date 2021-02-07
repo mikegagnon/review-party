@@ -147,6 +147,41 @@ def updateBook(bookid, userid, booktitle, link1, link2, smallpages, largepages):
     return True;
 
 @ErrorRollback
+def insertNewReviewBook(userid, bookid, reviewtext):
+    conn = getConn()
+    c = conn.cursor()
+
+    c.execute("""
+        INSERT INTO reviews
+        (userid, bookid, reviewtext)
+        VALUES (%s, %s, %s) """, (userid, bookid, reviewtext))
+
+    c.close()
+    conn.commit()
+
+@ErrorRollback
+def getReview(userid, bookid):
+    conn = getConn()
+    c = conn.cursor()
+
+    c.execute("""
+        SELECT reviewtext
+        FROM reviews WHERE userid=%s AND bookid=%s""", (userid, bookid))
+
+    result = c.fetchone()
+    if result != None:
+        reviewtext = result[0]
+    else:
+        reviewtext = None
+
+    c.close()
+    conn.commit()
+
+    return reviewtext
+
+
+
+@ErrorRollback
 def insertNewBook(userid, booktitle, link1, link2, smallpages, largepages):
     conn = getConn()
     c = conn.cursor()
@@ -200,6 +235,8 @@ def getImg(bookid, size, pagenum):
     c.execute("""
         SELECT numpdfpages
         FROM books WHERE bookid=%s""", (bookid,))
+
+    # TODO: what if there is no result?
     numpdfpages = int(c.fetchone()[0])
 
     if pagenum < 1 or pagenum > numpdfpages:
@@ -209,6 +246,8 @@ def getImg(bookid, size, pagenum):
         SELECT bits
         FROM pdfimgs WHERE bookid=%s AND size=%s AND pagenum=%s
         ORDER BY pdfimgid DESC""", (bookid, size, pagenum))
+
+    # TODO: what if there is no result?
     result = c.fetchone()[0]
     c.close()
     conn.commit()
@@ -222,6 +261,8 @@ def getNumRegisteredUsers():
     c.execute("""
         SELECT COUNT(userid)
         FROM users WHERE setup_state='EMAIL_CONFIRMED'""")
+
+    # TODO: what if there is no result?
     result = int(c.fetchone()[0])
     
     c.close()

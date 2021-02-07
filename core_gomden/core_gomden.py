@@ -56,18 +56,19 @@ class EditBookForm(FlaskForm):
     filepdf = FileField("filepdf")
 
 class NewReviewBookForm(FlaskForm):
-    review = StringField("review")
+    reviewtext = StringField("reviewtext")
 
 def getNewBook(userid):
     form = NewBookForm()
     return render_template("new-book.html", form=form)
 
-def getNewReviewBook(userid, book):
+def getNewReviewBook(userid, book, reviewtext, message=None):
     form = NewReviewBookForm()
     booktitle = book["booktitle"]
     bookid = book["bookid"]
     maxlength = config.REVIEW_MAX_LEN
-    return render_template("new-review-book.html", maxlength=maxlength, form=form, booktitle=booktitle, bookid=bookid)
+
+    return render_template("new-review-book.html", message=message, reviewtext=reviewtext, maxlength=maxlength, form=form, booktitle=booktitle, bookid=bookid)
 
 def getEditBook(userid, book, message=None):
     form = EditBookForm()
@@ -172,11 +173,59 @@ def postNewBook(userid):
 def postNewReviewBook(userid, book):
     form = NewReviewBookForm()
 
+    if not form.validate_on_submit():
+        abort(500)
 
 
-    bookid = db.insertNewBook(userid, booktitle, link1, link2, smallbytes, largebytes)
 
-    return redirect(url_for('core_gomden_blueprint.existingbook', bookid=bookid))
+    reviewtext = form.data["reviewtext"]
+
+    if len(reviewtext) == 0 or len(reviewtext) > config.REVIEW_MAX_LEN:
+        return getNewReviewBook(userid, book, reviewtext, message="Your review is empty")
+
+    db.insertNewReviewBook(userid, bookid=book["bookid"], reviewtext=reviewtext)
+
+    bookid = book["bookid"]
+
+    # Make sure to do perms
+    return redirect(url_for('core_gomden_blueprint.existing_review_book',bookid=bookid))
+    #return render_template("view-review-book.html", message=None, reviewtext=reviewtext, maxlength=maxlength, form=form, booktitle=booktitle, bookid=bookid)
+
+# For reviewers to see their own reviews
+@core_gomden_blueprint.route('/myreview/<int:bookid>')
+def existing_review_book(bookid):
+
+    if "userid" not in session:
+        abort(403)
+
+    userid = session["userid"]
+
+    book = db.getBook(bookid)
+
+    if book == None:
+        abort(403)
+
+    # You cannot review your own book
+    if book["userid"] == userid:
+        abort(403)
+
+    reviewtext = db.getReview(userid, bookid)
+
+    if reviewtext == None:
+        abort(403)
+
+    bookid = book["bookid"]
+    booktitle = book["booktitle"]
+
+    # Split into paragraphs
+    paras =  list(filter(lambda x: not re.match(r"^\s+$", x), re.split(r"(\s*\n\s*)(\s*\n\s*)+",  reviewtext)))
+
+    form = EmptyForm()
+
+    return render_template("my-existing-review.html", bookid=bookid, booktitle=booktitle, paras=paras, form=form)
+
+
+
 
 
 def postEditBook(userid, book):
@@ -237,8 +286,15 @@ def review_book(bookid):
 
     # TODO: if you've already reviewed this book
 
+    reviewtext = db.getReview(userid, bookid)
+
+    if reviewtext != None:
+         reviewtext = reviewtext[:config.REVIEW_MAX_LEN]
+    else:
+         reviewtext = ""
+
     if request.method == "GET":
-        return getNewReviewBook(userid, book)
+        return getNewReviewBook(userid, book, reviewtext)
     else:
         return postNewReviewBook(userid, book)
 

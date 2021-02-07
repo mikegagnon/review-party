@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+{% block title %}Review book{% endblock %}
+{% block newbook_active %}active{% endblock %}
+{% block content %}
+
+<main role="main" class="container">
+
+
+    <h1>Review: {{booktitle}}</h1>
+
+    {% for p in paras %}
+
+      <p>{{p}}</p>
+
+    {% endfor %}
+
+</main>
+
+{% endblock %}

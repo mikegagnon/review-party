@@ -1,5 +1,12 @@
 BEGIN TRANSACTION;
 
+CREATE TABLE "reviews" (
+    "reviewid" BIGSERIAL PRIMARY KEY,
+    "userid" BIGINT, /* of reviewer */
+    "bookid" BIGINT,
+    "reviewtext" TEXT
+);
+
 CREATE TABLE "pdfimgs" (
     "pdfimgid" BIGSERIAL PRIMARY KEY,
     "userid" BIGINT,

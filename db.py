@@ -166,7 +166,8 @@ def getReview(userid, bookid):
 
     c.execute("""
         SELECT reviewtext
-        FROM reviews WHERE userid=%s AND bookid=%s""", (userid, bookid))
+        FROM reviews WHERE userid=%s AND bookid=%s
+        ORDER BY reviewid DESC""", (userid, bookid))
 
     result = c.fetchone()
     if result != None:

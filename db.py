@@ -66,6 +66,203 @@ def toBookJson(record):
         "numpdfpages": record[5]
     }
 
+def toRbookJson(record):
+    return {
+        "bookid": record[0],
+        "userid": record[1],
+        "booktitle": record[2],
+        "points": record[3],
+    }
+
+def doGetRandomBooks(books):
+    numBooks = len(books)
+
+    if numBooks == 0:
+        return []
+
+    random.shuffle(books)
+    totalPoints = sum([b["points"] for b in books])
+
+    selected = []
+
+    selectedBookids = set([])
+
+    for _ in range(0, numBooks):
+        #for b in books:
+    
+        doLoop = True
+
+        # Keep looping until we select an unselected book
+        while doLoop:
+            targetPoint = random.uniform(0.0, totalPoints)
+            rightside = books[0]["points"]
+            didselect = False
+            leftside = 0.0
+        
+            bookselect = None
+            for i in range(0, numBooks - 1):
+                b = books[i]
+                if targetPoint >= leftside and targetPoint <= rightside:
+                    bookselect = b #selected.append(b)
+                    didselect = True
+                    break
+                leftside = rightside
+                rightside += books[i+1]["points"]
+
+            if not didselect:
+                #raise Exception("bad")
+                #selected.append(books[-1])
+                bookselect = books[-1]
+
+            if bookselect["bookid"] not in selectedBookids:
+                selectedBookids.add(bookselect["bookid"])
+                doLoop = False
+
+        selected.append(bookselect)
+
+
+    return selected
+
+def test0():
+    result = doGetRandomBooks([])
+    if len(result) != 0:
+        raise Exception("test0 fail")
+
+def test1():
+    books = [{"points": 4.7, "bookid": 1}]
+
+    for _ in range(0, 100):
+        result = doGetRandomBooks(books)
+        if len(result) != 1:
+            raise Exception("test1 fail")
+        if result[0]["bookid"] != 1:
+            raise Exception("test1 fail")
+
+def test2():
+    books = [
+        {"points": 2.0, "bookid": 1},
+        {"points": 3.0, "bookid": 2}
+    ]
+
+    iterations = 100000
+    num1 = 0.0
+    num2 = 0.0
+    for _ in range(0, iterations):
+        result = doGetRandomBooks(books)
+        if len(result) != 2:
+            raise Exception("test2 fail")
+        if result[0]["bookid"] == 1:
+            num1 += 1
+            if result[1]["bookid"] != 2:
+                raise Exception("test2 fail a: " + str(result[1]["bookid"]))
+        elif result[0]["bookid"] == 2:
+            num2 += 1
+            if result[1]["bookid"] != 1:
+                raise Exception("test2 fail b: " + str(result[1]["bookid"]))
+        else:
+            raise Exception("test2 fail")
+
+    p1 = num1 / iterations
+
+    if round(p1, 2) != 2.0 / 5.0:
+        raise Exception("test2 fail c" + str(round(p1, 2)))
+
+
+def test3():
+    books = [
+        {"points": 1.0, "bookid": 1},
+        {"points": 2.0, "bookid": 2},
+        {"points": 3.0, "bookid": 3},
+    ]
+
+    iterations = 100000
+
+    # probability when book 1 is in ith slot
+    slots = [0.0, 0.0, 0.0]
+    for _ in range(0, iterations):
+        result = doGetRandomBooks(books)
+        if len(result) != 3:
+            raise Exception("test3 fail")
+        if result[0]["bookid"] == 1:
+            slots[0] += 1
+            if result[1]["bookid"] == 2:
+                if result[2]["bookid"] != 3:
+                    raise Exception("test3 fail")
+            elif result[1]["bookid"] == 3:
+                if result[2]["bookid"] != 2:
+                    raise Exception("test3 fail")
+            else:
+                raise Exception("test3 fail")
+        elif result[0]["bookid"] == 2:
+            if result[1]["bookid"] == 1:
+                slots[1] += 1
+                if result[2]["bookid"] != 3:
+                    raise Exception("test3 fail")
+            elif result[1]["bookid"] == 3:
+                slots[2] += 1
+                if result[2]["bookid"] != 1:
+                    raise Exception("test3 fail")
+            else:
+                raise Exception("test3 fail")
+        elif result[0]["bookid"] == 3:
+            if result[1]["bookid"] == 1:
+                slots[1] += 1
+                if result[2]["bookid"] != 2:
+                    raise Exception("test3 fail")
+            elif result[1]["bookid"] == 2:
+                slots[2] += 1
+                if result[2]["bookid"] != 1:
+                    raise Exception("test3 fail")
+            else:
+                raise Exception("test3 fail")
+        else:
+            raise Exception("test2 fail")
+
+    #targets = [1.0 / 6.0, 2.0 / 6.0, 3.0 / 6.0]
+    ps = [p / float(iterations) for p in slots]
+
+    # for each book
+    #for i in range(0, 3):
+    #    num = nums[i]
+    #    bookid = i + 1
+
+
+
+    #if round(p1, 2) != 2.0 / 5.0:
+    #    raise Exception("test2 fail c" + str(round(p1, 2)))
+
+
+
+def testDoGetRandomBooks():
+    test0()
+    test1()
+    test2()
+    test3()
+
+
+#testDoGetRandomBooks()
+
+
+@ErrorRollback
+def getRandomBooks(numBooks):
+    conn = getConn()
+    c = conn.cursor()
+    c.execute("""
+        SELECT b.bookid, b.userid, b.booktitle, u.points
+        FROM books b LEFT JOIN users u on b.userid=r.bookid
+        """, (bookid,))
+    results = c.fetchall()
+
+    if results == None:
+        return None
+
+    books = [toRbookJson(r) for r in results]
+
+    return  doGetRandomBooks(books)
+
+
+
+
 @ErrorRollback
 def getBook(bookid):
     conn = getConn()

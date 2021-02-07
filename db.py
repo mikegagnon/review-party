@@ -178,6 +178,17 @@ def getMyBooks(userid):
     results = c.fetchall()
     results = [toMyBookJson(record) for record in results]
 
+    for book in results:
+        c.execute("""
+        SELECT COUNT (DISTINCT userid)
+        FROM reviews WHERE bookid=%s""", (book["bookid"],))
+
+        result = c.fetchone()
+        if result:
+            book["numreviews"] = int(result[0])
+        else:
+            book["numreviews"] = 0
+            
     c.close()
     conn.commit()
 

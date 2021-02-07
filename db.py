@@ -201,6 +201,41 @@ def calcPoints(userid):
         "numTotalReviews": numTotalReviews
     }
 
+def updatePoints(c, userid):
+
+    c.execute("""
+        SELECT COUNT(bookid)
+        FROM books WHERE userid=%s""", (userid,))
+
+    result = c.fetchone()
+    if result:
+        numBooks = int(result[0])
+    else:
+        numBooks = 0
+
+    if numBooks == 0:
+        points = 0.0
+    else:
+        c.execute("""
+        SELECT COUNT(DISTINCT(bookid))
+        FROM reviews WHERE userid=%s""", (userid,))
+
+        result = c.fetchone()
+        if result:
+            #numReviews = len(result)
+            numReviews = int(result[0])
+        else:
+            numReviews = 0
+
+
+        points = float(numReviews + numBooks) / float(numBooks)
+
+    c.execute("""
+        UPDATE users
+        SET points=%s
+        WHERE userid=%s;""", (points, userid))
+
+# And updates points
 @ErrorRollback
 def insertNewReviewBook(userid, bookid, reviewtext):
     conn = getConn()
@@ -211,8 +246,12 @@ def insertNewReviewBook(userid, bookid, reviewtext):
         (userid, bookid, reviewtext)
         VALUES (%s, %s, %s) """, (userid, bookid, reviewtext))
 
+    updatePoints(c, userid)
+
     c.close()
     conn.commit()
+
+
 
 def toMyBookJson(record):
     return {
@@ -381,6 +420,8 @@ def insertNewBook(userid, booktitle, link1, link2, smallpages, largepages):
         (userid, bookid, pagenum, size, bits)
         VALUES (%s, %s, %s, 'LARGE', %s) """, (userid, bookid, pagenum, page))
     
+    updatePoints(c, userid)
+
     c.close()
     conn.commit()
 

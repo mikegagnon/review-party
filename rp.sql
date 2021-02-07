@@ -38,7 +38,8 @@ CREATE TABLE "users" (
     "email" TEXT,
     "refer" BIGINT, /* userid of the person who referred this user */
     "setup_state" TEXT, /* possible values: EMAIL_CONFIRMED, CONFIRMATION_EMAIL_SENT, tbd? */
-    "ts" BIGINT DEFAULT CAST((extract(epoch from now()) * 1000) as BIGINT) /* num milliseconds since epoch */
+    "ts" BIGINT DEFAULT CAST((extract(epoch from now()) * 1000) as BIGINT), /* num milliseconds since epoch */
+    "points" DOUBLE PRECISION /*points per book*/
 );
 
 CREATE TABLE "roles" (

@@ -100,6 +100,52 @@ def getBook(bookid):
 
     return book
 
+# Returns True if success
+@ErrorRollback
+def updateBook(bookid, userid, booktitle, link1, link2, smallpages, largepages):
+    conn = getConn()
+    c = conn.cursor()
+
+    # c.execute("""
+    #     INSERT INTO pdfs
+    #     (userid, bits)
+    #     VALUES (%s, %s) """, (userid, filepdf))
+
+    #c.execute("SELECT MAX(pdfid) FROM pdfs")
+    #result = c.fetchone()
+    #pdfid = result[0]
+
+    c.execute("""
+        UPDATE books
+        SET booktitle=%s, link1=%s, link2=%s, numpdfpages=%s
+        WHERE bookid=%s AND userid=%s""", (booktitle, link1, link2, len(smallpages), bookid, userid))
+
+    rowcount = c.rowcount
+
+    if rowcount != 1:
+        return False
+
+    pagenum = 0
+    for page in smallpages:
+        pagenum += 1
+        c.execute("""
+        INSERT INTO pdfimgs
+        (userid, bookid, pagenum, size, bits)
+        VALUES (%s, %s, %s, 'SMALL', %s) """, (userid, bookid, pagenum, page))
+
+    pagenum = 0
+    for page in largepages:
+        pagenum += 1
+        c.execute("""
+        INSERT INTO pdfimgs
+        (userid, bookid, pagenum, size, bits)
+        VALUES (%s, %s, %s, 'LARGE', %s) """, (userid, bookid, pagenum, page))
+    
+    c.close()
+    conn.commit()
+
+    return True;
+
 @ErrorRollback
 def insertNewBook(userid, booktitle, link1, link2, smallpages, largepages):
     conn = getConn()

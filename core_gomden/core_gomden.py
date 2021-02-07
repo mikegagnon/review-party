@@ -60,12 +60,13 @@ def getNewBook(userid):
     form = NewBookForm()
     return render_template("new-book.html", form=form)
 
-def getEditBook(userid, book):
+def getEditBook(userid, book, message=None):
     form = EditBookForm()
     booktitle = book["booktitle"]
     link1 = book["link1"]
     link2 = book["link2"]
-    return render_template("edit-book.html", form=form, booktitle=booktitle, link1=link1, link2=link2)
+    bookid = book["bookid"]
+    return render_template("edit-book.html", form=form, bookid=bookid, booktitle=booktitle, link1=link1, link2=link2, message=message)
 
 ALLOWED_EXTENSIONS = ["pdf"]
 # https://flask.palletsprojects.com/en/1.1.x/patterns/fileuploads/
@@ -75,9 +76,7 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-def postNewBook(userid):
-    form = NewBookForm()
-
+def checkBookPost(form):
     if not form.validate_on_submit():
         abort(500)
 
@@ -86,23 +85,23 @@ def postNewBook(userid):
 
     file = request.files['filepdf']
     if file.filename == "":
-        return render_template("new-book.html", form=form, message="You do not attach a file.")
+        return ["You do not attach a file."] #return [render_template(template, bookid=bookid, form=form, message="You do not attach a file.")]
     if not allowed_file(file):
-        return render_template("new-book.html", form=form, message="Your file must be a PDF.")
+        return ["Your file must be a PDF."] #return [render_template(template, bookid=bookid, form=form, message="Your file must be a PDF.")]
 
     filepdf = request.files['filepdf'].read()
 
     if len(filepdf) > config.MAX_PDF_SIZE:
-        return render_template("new-book.html", form=form, message="Your file is too large.")
+        return ["Your file is too large."] #return [render_template(template, bookid=bookid, form=form, message="Your file is too large.")]
 
     try:
         smallpages = convert_from_bytes(filepdf, config.SMALL_DPI, fmt="jpg")
         largepages = convert_from_bytes(filepdf, config.LARGE_DPI, fmt="jpg")
     except exceptions.PDFPageCountError:
-        return render_template("new-book.html", form=form, message="Your file must be a PDF")
+        return ["Your file must be a PDF"] #return [render_template(template, bookid=bookid, form=form, message="Your file must be a PDF")]
 
     if len(smallpages) < 1 or len(smallpages) > config.MAX_PDF_PAGES:
-        return render_template("new-book.html", form=form, message=f"Your PDF exceeds {config.MAX_PDF_PAGES} pages")
+        return [f"Your PDF exceeds {config.MAX_PDF_PAGES} pages"] #return [render_template(template, bookid=bookid, form=form, message=f"Your PDF exceeds {config.MAX_PDF_PAGES} pages")]
 
 
     smallbytes = []
@@ -136,19 +135,46 @@ def postNewBook(userid):
     link2 = form.data["link2"]
 
     if not config.saneBooktitle(booktitle):
-        return render_template("new-book.html", form=form, message="Invalid book title")
+        return ["Invalid book title"] #return [render_template(template, bookid=bookid, form=form, message="Invalid book title")]
     if not config.saneLinkUrl(link1):
-        return render_template("new-book.html", form=form, message="Invalid primary link url")
+        return ["Invalid primary link url"] #return [render_template(template, bookid=bookid, form=form, message="Invalid primary link url")]
     if not config.saneLinkUrl(link2):
-        return render_template("new-book.html", form=form, message="Invalid secondary link url")
+        return ["Invalid secondary link url"] #return [render_template(template, bookid=bookid, form=form, message="Invalid secondary link url")]
     if len(link1) == 0:
-        return render_template("new-book.html", form=form, message="You must include a primary link.")
+        return ["You must include a primary link."] #return [render_template(template, bookid=bookid, form=form, message="You must include a primary link.")]
+
+    return [booktitle, link1, link2, smallbytes, largebytes]
         
+
+def postNewBook(userid):
+    form = NewBookForm()
+
+    result = checkBookPost(form)
+    if len(result) == 1:
+        message = result[0]
+        return render_template(template, bookid=bookid, form=form, message=message)
+    
+    [booktitle, link1, link2, smallbytes, largebytes] = result
+    
     bookid = db.insertNewBook(userid, booktitle, link1, link2, smallbytes, largebytes)
 
     return redirect(url_for('core_gomden_blueprint.existingbook', bookid=bookid))
 
-    #render_template('book.html', form=form, bookid=id)
+def postEditBook(userid, book):
+    form = NewBookForm()
+
+    bookid = book["bookid"]
+
+    result = checkBookPost(form)
+    if len(result) == 1:
+        message = result[0]
+        return getEditBook(userid, book, message)
+
+    [booktitle, link1, link2, smallbytes, largebytes] = result
+    
+    db.updateBook(bookid, userid, booktitle, link1, link2, smallbytes, largebytes)
+
+    return redirect(url_for('core_gomden_blueprint.existingbook', bookid=bookid))
 
 @core_gomden_blueprint.route("/edit-book/<int:bookid>", methods=["GET", "POST"])
 def edit_book(bookid):
@@ -158,6 +184,9 @@ def edit_book(bookid):
     userid = session["userid"]
 
     book = db.getBook(bookid)
+
+    if book["userid"] != userid:
+        abort(403)
 
     if book["bookid"] != bookid:
         abort(403)

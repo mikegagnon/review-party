@@ -252,7 +252,8 @@ def existingbook(bookid):
 
 @core_gomden_blueprint.route('/page/<int:bookid>/<size>/<int:pagenum>.jpg')
 def get_image(bookid, size, pagenum):
-
+    if "userid" not in session:
+        abort(403)
     if size == "small":
         size = "SMALL"
     elif size == "large":

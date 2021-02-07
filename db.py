@@ -582,6 +582,42 @@ def getReview(userid, bookid):
 
     return reviewtext
 
+# userid is the visitor must make sure it matches
+def makeReviewPublicPrivate(userid, bookid, reviewid, public):
+
+    conn = getConn()
+    c = conn.cursor()
+
+    c.execute("""
+        SELECT b.userid, r.userid
+        FROM reviews r
+        LEFT JOIN books b ON b.bookid = r.bookid
+        WHERE r.reviewid=%s
+        """, (reviewid,))
+
+    # Make sure userid matches book owner's id
+    result = c.fetchone()
+    if result == None:
+        abort(403)
+
+    [bookuserid, reviewuserid] = result
+    print(result)
+    if int(bookuserid) != int(userid):
+        abort(403)
+
+    c.execute("""
+        DELETE FROM reviewperms WHERE userid=%s AND bookid=%s 
+        """, (reviewuserid, bookid))
+
+    if public:
+        pstr = "PUBLIC"
+        c.execute("""
+            INSERT INTO reviewperms (userid, bookid, perm)
+            VALUES (%s, %s, %s)""", (reviewuserid, bookid, pstr))
+
+    c.close()
+    conn.commit()
+
 
 
 @ErrorRollback

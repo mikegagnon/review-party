@@ -5,6 +5,7 @@
 
 <main role="main" class="container">
 
+{{ reviews }}
 
     
 
@@ -85,12 +86,13 @@
 
             
 
-            {% set color = "black" if r["perm"] == "public" else "grey" %}
+            {% set color = "black" if r["perm"] == "PUBLIC" else "grey" %}
+            {% set bordercolor = "black" if r["perm"] == "PUBLIC" else "lightgrey" %}
 
             <div class="row" style='margin-bottom: 20px; color: {{ color }};'>
             <div class="col-md-2">
             </div>
-            <div class="col-md-8" style="border: 1px solid lightgrey;">
+            <div class="col-md-8" style="border: 1px solid {{ bordercolor }};">
                 <p style="margin-top: 10px;"><b>Review from {{r["displayname"]}}</b></p>
 
                 
@@ -103,8 +105,8 @@
             </div>
             <div class="col-md-2">
 
-                {% if r["perm"] == "public" %}
-                    <button class="btn btn-primary" style="float:left;margin-bottom: 30px;">Make private</button>
+                {% if r["perm"] == "PUBLIC" %}
+                    <button type ="submit" name="make-private" value="{{r['reviewid']}}" class="btn btn-primary" style="float:left;margin-bottom: 30px;">Make private</button>
                 {% else %}
                     <button type ="submit" name="make-public" value="{{r['reviewid']}}" class="btn btn-secondary" style="float:left;margin-bottom: 30px;">Make public</button>
                 {% endif %}

@@ -9,7 +9,7 @@ CREATE TABLE "reviews" (
 
 CREATE TABLE "reviewperms" (
     "reviewpermid" BIGSERIAL PRIMARY KEY,
-    "userid" BIGINT,
+    "userid" BIGINT, /* user who wrote the review */
     "bookid" BIGINT,
     "perm" TEXT /* either PUBLIC or *empty*, which signifies private */
 );

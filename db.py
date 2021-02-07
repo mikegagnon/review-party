@@ -629,6 +629,16 @@ def getAllReviews(bookid):
     results = c.fetchall()
     results = [toAllReviewsJson(record) for record in results]
 
+    # for r in results:
+    #     if r["sigbookid"] == None:
+    #         r["sigbooktitle"] = None
+    #     else:
+    #         c.execute("""
+    #             SELECT booktitle
+    #             FROM books WHERE bookid=%s""", (r["sigbookid"],))
+    #         res = c.fetchone()
+    #         r["sigbooktitle"] = res[0]
+
     c.close()
     conn.commit()
 
@@ -639,10 +649,11 @@ def getPublicReviews(bookid):
     c = conn.cursor()
 
     c.execute("""
-        SELECT DISTINCT ON (r.userid) r.reviewid, r.reviewtext, r.userid, u.displayname, rp.perm
+        SELECT DISTINCT ON (r.userid) r.reviewid, r.reviewtext, r.userid, u.displayname, rp.perm, u.sigbookid, b.booktitle
         FROM reviews r
         LEFT JOIN users u on u.userid=r.userid
         LEFT JOIN reviewperms rp on rp.userid=r.userid AND rp.bookid=r.bookid
+        LEFT JOIN books b on u.sigbookid=b.bookid
         WHERE r.bookid=%s AND rp.perm='PUBLIC' """, (bookid,))
 
     results = c.fetchall()

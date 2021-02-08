@@ -13,6 +13,7 @@ import db
 def ensureClubMember():
     if "userid" not in session:
         abort(403)
+    return session["userid"]
 
 bcrypt = None
 send_email = None
@@ -103,11 +104,29 @@ def getInviteLink(userid):
 
     return invitelink
 
+def getWorkToInvite(userid):
+    numreviews = len(db.getMyReviews(userid))
+    numbooks = len(db.getMyBooks(userid))
+    if numreviews == 0 and numbooks == 0:
+        return "I'm sorry, but before you can invite a friend, you must post a book, and post a review."
+    if numreviews == 0:
+        return "I'm sorry, but before you can invite a friend, you must post a review."
+    if numbooks == 0:
+        return "I'm sorry, but before you can invite a friend, you must post a book."
+    return None
+
+
 @account_blueprint.route("/club-members-only/invite", methods=["GET"])
 def invitepage():
-    ensureClubMember()
+    userid = ensureClubMember()
 
     form = EmptyForm(request.form)
+
+    if config.WORK_BEFORE_INVITE:
+        message = getWorkToInvite(userid)
+        if message != None:
+            return render_template("message.html", form=form, message=message)
+
     userid = session["userid"]
     invitelink = getInviteLink(userid)
     return render_template("invite.html", form=form, invitelink=invitelink)

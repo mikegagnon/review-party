@@ -156,6 +156,16 @@ def checkBookPost(form):
     if len(smallpages) < 1 or len(smallpages) > config.MAX_PDF_PAGES:
         return [f"Your PDF exceeds {config.MAX_PDF_PAGES} pages"] #return [render_template(template, bookid=bookid, form=form, message=f"Your PDF exceeds {config.MAX_PDF_PAGES} pages")]
 
+    for page in smallpages:
+        (width, height) = page.size
+        if width < config.MIN_PDF_WIDTH * config.SMALL_DPI:
+            return ["Your PDF contains a page that is too small. I recommend 8.5x11"]
+        if width > config.MAX_PDF_WIDTH * config.SMALL_DPI:
+            return ["Your PDF contains a page that is too large. I recommend 8.5x11"]
+        if height < config.MIN_PDF_HEIGHT * config.SMALL_DPI:
+            return ["Your PDF contains a page that is too small. I recommend 8.5x11"]
+        if height > config.MAX_PDF_HEIGHT * config.SMALL_DPI:
+            return ["Your PDF contains a page that is too large. I recommend 8.5x11"]
 
     smallbytes = []
     largebytes = []

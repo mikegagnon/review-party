@@ -20,6 +20,9 @@ MAX_PDF_SIZE = 20 * 1000 * 1000 # 20 MB
 MAX_PDF_PAGES = 10 # page count
 MAX_PDF_WIDTH = 12  #in inches
 MAX_PDF_HEIGHT = 12 #in inches
+MIN_PDF_WIDTH = 7  #in inches
+MIN_PDF_HEIGHT = 7 #in inches
+
 
 NUM_FRONT_PAGE_BOOKS = 3
 

@@ -163,7 +163,7 @@ def postNewBook(userid):
     result = checkBookPost(form)
     if len(result) == 1:
         message = result[0]
-        return render_template("new-book.html", bookid=bookid, form=form, message=message)
+        return render_template("new-book.html", form=form, message=message)
     
     [booktitle, link1, link2, smallbytes, largebytes] = result
     

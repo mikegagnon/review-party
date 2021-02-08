@@ -819,8 +819,13 @@ def getImg(bookid, size, pagenum):
         SELECT numpdfpages
         FROM books WHERE bookid=%s""", (bookid,))
 
-    # TODO: what if there is no result?
-    numpdfpages = int(c.fetchone()[0])
+    res = c.fetchone()
+    if res == None:
+        c.close()
+        conn.commit()
+        return None
+
+    numpdfpages = int(res[0])
 
     if pagenum < 1 or pagenum > numpdfpages:
         return None
@@ -830,8 +835,13 @@ def getImg(bookid, size, pagenum):
         FROM pdfimgs WHERE bookid=%s AND size=%s AND pagenum=%s
         ORDER BY pdfimgid DESC""", (bookid, size, pagenum))
 
-    # TODO: what if there is no result?
-    result = c.fetchone()[0]
+    res = c.fetchone()
+    if res == None:
+        c.close()
+        conn.commit()
+        return None
+
+    result = res[0]
     c.close()
     conn.commit()
 
@@ -845,8 +855,13 @@ def getNumRegisteredUsers():
         SELECT COUNT(userid)
         FROM users WHERE setup_state='EMAIL_CONFIRMED'""")
 
-    # TODO: what if there is no result?
-    result = int(c.fetchone()[0])
+    res = c.fetchone()
+    if res == None:
+        c.close()
+        conn.commit()
+        return None
+
+    result = int(res[0])
     
     c.close()
     conn.commit()

@@ -24,10 +24,10 @@ from werkzeug.utils import secure_filename
 def ensureClubMember():
     if "userid" not in session:
         abort(403)
+    return session["userid"]
 
 def ensureMyBook(bookid):
-    ensureClubMember()
-    userid = session["userid"]
+    userid = ensureClubMember()
     book = db.getBook(bookid)
 
     if book == None:
@@ -37,7 +37,31 @@ def ensureMyBook(bookid):
         abort(403)
 
     if book["bookid"] != bookid:
+        print('book["bookid"] != bookid', book["bookid"], bookid)
         abort(500)
+
+    return book
+
+def ensure_NOT_MyBook(bookid):
+    userid = ensureClubMember()
+    book = db.getBook(bookid)
+
+    if book == None:
+        abort(404)
+
+    if book["userid"] == userid:
+        abort(403)
+
+    if book["bookid"] != bookid:
+        abort(500)
+
+    return book
+
+def ensure_Found_book(bookid):
+    book = db.getBook(bookid)
+    if book == None:
+        abort(404)
+
 
 send_email = None
 def init(se):
@@ -297,12 +321,8 @@ def postEditBook(userid, book):
 
 @core_gomden_blueprint.route("/club-members-only/private/edit-book/<int:bookid>", methods=["GET", "POST"])
 def edit_book(bookid):
-    ensureClubMember()
-    ensureMyBook(bookid)
-
-    userid = session["userid"]
-
-    book = db.getBook(bookid)
+    userid = ensureClubMember()
+    book = ensureMyBook(bookid)
 
     if request.method == "GET":
         return getEditBook(userid, book)
@@ -312,22 +332,11 @@ def edit_book(bookid):
 
 @core_gomden_blueprint.route("/club-members-only/private/review-book/<int:bookid>", methods=["GET", "POST"])
 def review_book(bookid):
-    if "userid" not in session:
-        abort(403)
-
-    userid = session["userid"]
-
-    book = db.getBook(bookid)
-
-    if book == None:
-        abort(404)
+    userid = ensureClubMember()
 
     # You cannot review your own book
-    if book["userid"] == userid:
-        abort(403)
-
-    # TODO: if you've already reviewed this book
-
+    book = ensure_NOT_MyBook(bookid)
+    
     reviewtext = db.getReview(userid, bookid)
 
     if reviewtext != None:
@@ -345,11 +354,7 @@ class MyBooksForm(FlaskForm):
 
 @core_gomden_blueprint.route("/club-members-only/private/mybooks", methods=["GET", "POST"])
 def mybooks():
-    if "userid" not in session:
-        abort(403)
-
-    userid = session["userid"]
-
+    userid = ensureClubMember()
     if request.method == "GET":
         return getMybooks(userid)
     else:
@@ -386,10 +391,7 @@ def getMybooks(userid):
 
 @core_gomden_blueprint.route("/club-members-only/private/new-book", methods=["GET", "POST"])
 def newbook():
-    if "userid" not in session:
-        abort(403)
-
-    userid = session["userid"]
+    userid = ensureClubMember()
 
     if request.method == "GET":
         return getNewBook(userid)
@@ -440,33 +442,21 @@ def publicbookpage(bookid):
 
 
 # TODO: separate into ./private/.
-@core_gomden_blueprint.route("/club-members-only/private/mybook/<bookid>", methods=["GET", "POST"])
+@core_gomden_blueprint.route("/club-members-only/private/mybook/<int:bookid>", methods=["GET", "POST"])
 def myexistingbook(bookid):
-
-    if "userid" not in session:
-        abort(403)
-
-    userid = session["userid"]
-
-    book = db.getBook(bookid)
-    if book["userid"] != userid:
-        abort(403)
+    userid = ensureClubMember()
+    book = ensureMyBook(bookid)
 
     if request.method == "GET":
         return getExistingBook(userid, bookid, shared=False)
     else:
         return postExistingBook(userid, bookid)
 
-@core_gomden_blueprint.route("/club-members-only/shared/book/<bookid>", methods=["GET"])
+@core_gomden_blueprint.route("/club-members-only/shared/book/<int:bookid>", methods=["GET"])
 def existingbook(bookid):
-
-    if "userid" not in session:
-        abort(403)
-
-    userid = session["userid"]
-    
+    userid = ensureClubMember()
+    ensure_Found_book(bookid)    
     return getExistingBook(userid, bookid, shared=True)
-    #return redirect(url_for('core_gomden_blueprint.publicbookpage', bookid=bookid))
 
 class ExistingBookForm(FlaskForm):
     bookid = StringField("bookid")
@@ -519,8 +509,8 @@ def getExistingBook(userid, bookid, shared):
 
 @core_gomden_blueprint.route('/club-members-only/shared/page/<int:bookid>/<size>/<int:pagenum>.jpg')
 def get_image(bookid, size, pagenum):
-    if "userid" not in session:
-        abort(403)
+    ensureClubMember()
+
     if size == "small":
         size = "SMALL"
     elif size == "large":
@@ -528,7 +518,6 @@ def get_image(bookid, size, pagenum):
     else:
         abort(404)
 
-    #image_binary = read_image(pid)
     image_binary = db.getImg(bookid, size, pagenum)
 
     if image_binary == None:
@@ -537,8 +526,3 @@ def get_image(bookid, size, pagenum):
     return send_file(BytesIO(image_binary),
                      attachment_filename=f'{pagenum}.jpg',
                      mimetype='image/jpg')
-    #response = make_response(image_binary)
-    #response.headers.set('Content-Type', 'image/jpeg')
-    #response.headers.set(
-    #    'Content-Disposition', 'attachment', filename='%s.jpg' % pagenum)
-    #return response

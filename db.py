@@ -456,8 +456,27 @@ def updatePoints(c, userid):
 # And updates points
 @ErrorRollback
 def insertNewReviewBook(userid, bookid, reviewtext):
+
+
     conn = getConn()
     c = conn.cursor()
+
+    c.execute("""
+    SELECT COUNT(reviewid)
+    FROM reviews WHERE userid=%s AND bookid=%s""", (userid, bookid))
+
+    result = c.fetchone()
+    if result:
+        #numReviews = len(result)
+        numReviews = int(result[0])
+    else:
+        numReviews = 0
+
+    if numReviews >= 1:
+        c.close()
+        conn.commit()
+        return False
+
 
     c.execute("""
         INSERT INTO reviews
@@ -468,6 +487,8 @@ def insertNewReviewBook(userid, bookid, reviewtext):
 
     c.close()
     conn.commit()
+
+    return True
 
 
 

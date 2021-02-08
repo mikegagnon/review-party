@@ -48,7 +48,7 @@
                 <a href="{{ url_for('core_gomden_blueprint.edit_book', bookid=bookid)}}" class="btn btn-primary">Edit book</a><br><br>
             {% elif review %}
                 <p><b>Your review</b>: {{review}}</p>
-            {% else %}
+            {% elif notAlreadyReviewd %}
                 <a href="{{ url_for('core_gomden_blueprint.review_book', bookid=bookid)}}" class="btn btn-primary">Review book</a><br><br>
             {% endif %}
 
@@ -79,9 +79,10 @@
             <div class="col-md-2">
             </div>
             <div class="col-md-8">
+            {% if mybook %}
 
                 <p>{{reviews|length}} {{ 'review' if reviews|length == 1 else 'reviews'}}</p>
-
+            {% endif %}
             </div>
             <div class="col-md-2">
             </div>

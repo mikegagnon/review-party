@@ -236,7 +236,10 @@ def postNewReviewBook(userid, book):
     if len(reviewtext) == 0 or len(reviewtext) > config.REVIEW_MAX_LEN:
         return getNewReviewBook(userid, book, reviewtext, message="Your review is empty")
 
-    db.insertNewReviewBook(userid, bookid=book["bookid"], reviewtext=reviewtext)
+    success = db.insertNewReviewBook(userid, bookid=book["bookid"], reviewtext=reviewtext)
+
+    if not success:
+        abort(500)
 
     bookid = book["bookid"]
 
@@ -504,6 +507,8 @@ def getExistingBook(userid, bookid, shared):
     else:
         reviews = []
 
+    print(reviews)
+
     links = [book["link1"]]
 
     if book["link2"]:
@@ -515,7 +520,9 @@ def getExistingBook(userid, bookid, shared):
     edit = (userid == book["userid"]) and not shared
     review = None
 
-    return render_template("book.html", mybook=mybook, displayname=book["displayname"], sigbookid=book["sigbookid"], sigbooktitle=book["sigbooktitle"], reviews=reviews, form=form, edit=edit, bookid=book["bookid"], booktitle=book["booktitle"], links=links, numpdfpages=numpdfpages, review=review)
+    notAlreadyReviewd = db.getReview(userid, bookid) == None
+
+    return render_template("book.html", notAlreadyReviewd=notAlreadyReviewd, mybook=mybook, displayname=book["displayname"], sigbookid=book["sigbookid"], sigbooktitle=book["sigbooktitle"], reviews=reviews, form=form, edit=edit, bookid=book["bookid"], booktitle=book["booktitle"], links=links, numpdfpages=numpdfpages, review=review)
 
 
 @core_gomden_blueprint.route('/club-members-only/shared/page/<int:bookid>/<size>/<int:pagenum>.jpg')

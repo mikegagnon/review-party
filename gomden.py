@@ -4,6 +4,7 @@ from flask_sslify import SSLify
 from flask_wtf.csrf import CSRFProtect
 from flask_mail import Mail, Message
 from celery import Celery
+from flask_wtf import FlaskForm
 
 import json
 import time
@@ -38,16 +39,20 @@ from celery import Celery
 
 celery = Celery(app, broker=config.REDIS_URL)
 
+
+class EmptyForm(FlaskForm):
+    pass
+
 @app.errorhandler(403)
 def forbidden(e):
-    # note that we set the 404 status explicitly
-    #return render_template('404.html'), 404
+
+    form = EmptyForm()
     if "userid" in session:
         message = "You are not authorized to view this page."
-        return render_template("message.html", message=message), 403
+        return render_template("message.html", form=form, message=message), 403
     else:
         message = "Club members only, for this page"
-        return render_template("not-logged-in.html", message=message), 403
+        return render_template("not-logged-in.html", form=form, message=message), 403
     
 
 

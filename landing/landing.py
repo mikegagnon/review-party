@@ -11,6 +11,10 @@ import db
 
 landing_blueprint = Blueprint('landing_blueprint', __name__, template_folder='templates', static_folder="static", static_url_path='/landing-static')
 
+def ensureClubMember():
+    if "userid" not in session:
+        abort(403)
+
 class EmptyForm(FlaskForm):
      pass
 
@@ -35,6 +39,8 @@ def chunks(lst):
         yield segment    
 
 def landing_loggedin():
+    ensureClubMember()
+
     form = EmptyForm()
 
     books = db.getRandomBooks(config.NUM_FRONT_PAGE_BOOKS)

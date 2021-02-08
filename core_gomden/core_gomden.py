@@ -21,6 +21,24 @@ import re
 from wtforms import StringField, FileField
 from werkzeug.utils import secure_filename
 
+def ensureClubMember():
+    if "userid" not in session:
+        abort(403)
+
+def ensureMyBook(bookid):
+    ensureClubMember()
+    userid = session["userid"]
+    book = db.getBook(bookid)
+
+    if book == None:
+        abort(404)
+
+    if book["userid"] != userid:
+        abort(403)
+
+    if book["bookid"] != bookid:
+        abort(500)
+
 send_email = None
 def init(se):
     global send_email
@@ -197,8 +215,7 @@ def reviewToParas(reviewtext):
 
 @core_gomden_blueprint.route('/club-members-only/private/myreviews')
 def myreviews():
-    if "userid" not in session:
-        abort(403)
+    ensureClubMember()
 
     userid = session["userid"]
 
@@ -211,8 +228,7 @@ def myreviews():
 
 @core_gomden_blueprint.route('/club-members-only/private/mypoints')
 def mypoints():
-    if "userid" not in session:
-        abort(403)
+    ensureClubMember()
 
     userid = session["userid"]
 
@@ -233,9 +249,7 @@ def mypoints():
 # For reviewers to see their own reviews
 @core_gomden_blueprint.route('/club-members-only/private/myreview/<int:bookid>')
 def existing_review_book(bookid):
-
-    if "userid" not in session:
-        abort(403)
+    ensureClubMember()
 
     userid = session["userid"]
 
@@ -264,11 +278,8 @@ def existing_review_book(bookid):
 
     return render_template("my-existing-review.html", bookid=bookid, booktitle=booktitle, paras=paras, form=form)
 
-
-
-
-
 def postEditBook(userid, book):
+
     form = NewBookForm()
 
     bookid = book["bookid"]
@@ -286,21 +297,12 @@ def postEditBook(userid, book):
 
 @core_gomden_blueprint.route("/club-members-only/private/edit-book/<int:bookid>", methods=["GET", "POST"])
 def edit_book(bookid):
-    if "userid" not in session:
-        abort(403)
+    ensureClubMember()
+    ensureMyBook(bookid)
 
     userid = session["userid"]
 
     book = db.getBook(bookid)
-
-    if book == None:
-        abort(404)
-
-    if book["userid"] != userid:
-        abort(403)
-
-    if book["bookid"] != bookid:
-        abort(403)
 
     if request.method == "GET":
         return getEditBook(userid, book)

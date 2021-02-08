@@ -446,6 +446,10 @@ def myexistingbook(bookid):
 
     userid = session["userid"]
 
+    book = db.getBook(bookid)
+    if book["userid"] != userid:
+        abort(403)
+
     if request.method == "GET":
         return getExistingBook(userid, bookid, shared=False)
     else:
@@ -468,6 +472,10 @@ class ExistingBookForm(FlaskForm):
 # TODO: ddd make sure book owner matches visitor
 def postExistingBook(userid, bookid):
     form = ExistingBookForm()
+
+    # book = db.getBook(bookid)
+    # if book["userid"] != userid:
+    #     abort(403)
 
     if "make-public" in request.form:
         # passes userid of visitor

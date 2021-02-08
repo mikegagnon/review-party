@@ -38,6 +38,19 @@ from celery import Celery
 
 celery = Celery(app, broker=config.REDIS_URL)
 
+@app.errorhandler(403)
+def forbidden(e):
+    # note that we set the 404 status explicitly
+    #return render_template('404.html'), 404
+    if "userid" in session:
+        message = "You are not authorized to view this page."
+        return render_template("message.html", message=message), 403
+    else:
+        message = "Club members only, for this page"
+        return render_template("not-logged-in.html", message=message), 403
+    
+
+
 # TODO: rm/simplify print-based logging
 @celery.task()
 def send_email(subject, sender, recipient, body):

@@ -10,6 +10,12 @@ from gomden_log import *
 import config
 import db
 
+def ensureClubMember(message = None):
+    if "userid" not in session:
+        #abort(403)
+        #if message == None:
+        abort(403)#return render_template("not-logged-in.html", message=message)
+    #else 
 
 bcrypt = None
 send_email = None
@@ -54,15 +60,7 @@ def doLogin(token):
         [email] = timedSerializer.loads(token, salt="login-link", max_age=config.MAX_LOGIN_TOKEN_AGE)
     except:
         warn(funcname, f"could not extract email from token. Abort 403")
-        #return redirect(url_for('account_blueprint.loginexpired'))
-        #return redirect(url_for('account_blueprint.login', message="Your link has expired."))
         return render_template("login.html", form=form, message="I'm sorry, but your link has expired.")
-
-
-
-        #return redirect(url_for('landing_blueprint.landing', message="Your link has expired."))
-        #abort(403)
-
 
     user = db.getConfirmedUserByEmail(email)
     if not user:
@@ -110,8 +108,8 @@ def getInviteLink(userid):
 
 @account_blueprint.route("/club-members-only/invite", methods=["GET"])
 def invitepage():
-    if "userid" not in session:
-        abort(403)
+    ensureClubMember()
+
     form = EmptyForm(request.form)
     userid = session["userid"]
     invitelink = getInviteLink(userid)
@@ -342,6 +340,7 @@ def confirm_email(token):
 
 @account_blueprint.route("/account/logout", methods=["GET", "POST"])
 def logout():
+    ensureClubMember("You are already logged out.")
     funcname = "logout()"
 
     form = EmptyForm(request.form)

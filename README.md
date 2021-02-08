@@ -1,6 +1,9 @@
 # Clubby-1
 
-heroku config:set WEB_CONCURRENCY=1
+
+To prevent postgres race conditions:
+    
+    heroku config:set WEB_CONCURRENCY=1
 
 local: brew install poppler
 heroku: Aptfile + https://elements.heroku.com/buildpacks/heroku/heroku-buildpack-apt

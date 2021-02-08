@@ -10,12 +10,9 @@ from gomden_log import *
 import config
 import db
 
-def ensureClubMember(message = None):
+def ensureClubMember():
     if "userid" not in session:
-        #abort(403)
-        #if message == None:
-        abort(403)#return render_template("not-logged-in.html", message=message)
-    #else 
+        abort(403)
 
 bcrypt = None
 send_email = None
@@ -340,7 +337,8 @@ def confirm_email(token):
 
 @account_blueprint.route("/account/logout", methods=["GET", "POST"])
 def logout():
-    ensureClubMember("You are already logged out.")
+    ensureClubMember()
+
     funcname = "logout()"
 
     form = EmptyForm(request.form)

@@ -42,7 +42,9 @@
             <div class="col-md-2">
             </div>
             <div class="col-md-8">
-            {% if edit %}
+            {% if mybook %}
+            
+            {% elif edit %}
                 <a href="{{ url_for('core_gomden_blueprint.edit_book', bookid=bookid)}}" class="btn btn-primary">Edit book</a><br><br>
             {% elif review %}
                 <p><b>Your review</b>: {{review}}</p>

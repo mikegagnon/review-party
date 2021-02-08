@@ -511,10 +511,11 @@ def getExistingBook(userid, bookid, shared):
 
     numpdfpages = book["numpdfpages"]
 
+    mybook = userid == book["userid"]
     edit = (userid == book["userid"]) and not shared
     review = None
 
-    return render_template("book.html", displayname=book["displayname"], sigbookid=book["sigbookid"], sigbooktitle=book["sigbooktitle"], reviews=reviews, form=form, edit=edit, bookid=book["bookid"], booktitle=book["booktitle"], links=links, numpdfpages=numpdfpages, review=review)
+    return render_template("book.html", mybook=mybook, displayname=book["displayname"], sigbookid=book["sigbookid"], sigbooktitle=book["sigbooktitle"], reviews=reviews, form=form, edit=edit, bookid=book["bookid"], booktitle=book["booktitle"], links=links, numpdfpages=numpdfpages, review=review)
 
 
 @core_gomden_blueprint.route('/club-members-only/shared/page/<int:bookid>/<size>/<int:pagenum>.jpg')

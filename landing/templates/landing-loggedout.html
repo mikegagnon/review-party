@@ -5,6 +5,12 @@
 
 {% block content %}
 
+    {% if message %}
+    <div class="alert alert-warning" role="alert">
+      <p>{{ message }}</p>
+    </div>
+    {% endif %}
+
 <h1>Welcome visitor</h1>
 
 <p>To access this website, you must be invited by an existing club member. Sorry!</p>

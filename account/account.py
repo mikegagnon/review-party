@@ -53,8 +53,16 @@ def doLogin(token):
     try:
         [email] = timedSerializer.loads(token, salt="login-link", max_age=config.MAX_LOGIN_TOKEN_AGE)
     except:
-        error(funcname, f"could not extract email from token. Abort 403")
-        abort(403)
+        warn(funcname, f"could not extract email from token. Abort 403")
+        #return redirect(url_for('account_blueprint.loginexpired'))
+        #return redirect(url_for('account_blueprint.login', message="Your link has expired."))
+        return render_template("login.html", form=form, message="I'm sorry, but your link has expired.")
+
+
+
+        #return redirect(url_for('landing_blueprint.landing', message="Your link has expired."))
+        #abort(403)
+
 
     user = db.getConfirmedUserByEmail(email)
     if not user:
@@ -349,6 +357,7 @@ def logout():
 
     pop_session()
     return render_template("message.html", form=form, message="You are now logged out.")
+
 
 @account_blueprint.route("/account/login", methods=["GET", "POST"])
 def login():

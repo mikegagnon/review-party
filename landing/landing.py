@@ -14,7 +14,8 @@ landing_blueprint = Blueprint('landing_blueprint', __name__, template_folder='te
 class EmptyForm(FlaskForm):
      pass
 
-def landing_loggedout():
+# TODO: codedeup wtih account.py
+def landing_loggedout(message=None):
     form = EmptyForm()
 
     numRegisteredUsers = db.getNumRegisteredUsers()
@@ -24,7 +25,7 @@ def landing_loggedout():
     else:
         #return render_template("landing-loggedout.html", form=form)
         #return render_template("account_blueprint.login")
-        return redirect(url_for('account_blueprint.login'))
+        return redirect(url_for('account_blueprint.login', message=message))
 
 
 # https://stackoverflow.com/questions/312443/how-do-you-split-a-list-into-evenly-sized-chunks

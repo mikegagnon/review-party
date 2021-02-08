@@ -245,7 +245,6 @@ def postNewReviewBook(userid, book):
 
     # Make sure to do perms
     return redirect(url_for('core_gomden_blueprint.existing_review_book',bookid=bookid))
-    #return render_template("view-review-book.html", message=None, reviewtext=reviewtext, maxlength=maxlength, form=form, booktitle=booktitle, bookid=bookid)
 
 def reviewToParas(reviewtext):
     return list(filter(lambda x: not re.match(r"^\s+$", x), re.split(r"(\s*\n\s*)(\s*\n\s*)+",  reviewtext)))

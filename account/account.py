@@ -122,7 +122,8 @@ def invitepage():
 
     form = EmptyForm(request.form)
 
-    if config.WORK_BEFORE_INVITE:
+    # let the admin (userid = 1) skip the work
+    if config.WORK_BEFORE_INVITE and userid != 1:
         message = getWorkToInvite(userid)
         if message != None:
             return render_template("message.html", form=form, message=message)

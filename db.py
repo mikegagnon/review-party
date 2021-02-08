@@ -63,7 +63,9 @@ def toBookJson(record):
         "booktitle": record[2],
         "link1": record[3],
         "link2": record[4],
-        "numpdfpages": record[5]
+        "numpdfpages": record[5],
+        "sigbookid": record[6],
+        "displayname": record[7]
     }
 
 def doGetRandomBooks(books, maxBooks):
@@ -272,8 +274,10 @@ def getBook(bookid):
     conn = getConn()
     c = conn.cursor()
     c.execute("""
-        SELECT bookid, userid, booktitle, link1, link2, numpdfpages
-        FROM books WHERE bookid=%s""", (bookid,))
+        SELECT b.bookid, b.userid, b.booktitle, b.link1, b.link2, b.numpdfpages, u.sigbookid, u.displayname
+        FROM books b
+        LEFT JOIN users u ON u.userid=b.userid
+        WHERE bookid=%s""", (bookid,))
     result = c.fetchone()
     
     # TODO: raise exception?
@@ -283,6 +287,19 @@ def getBook(bookid):
         return None
 
     book = toBookJson(result)
+
+    if book["sigbookid"] == None:
+        book["sigbooktitle"] = None
+    else:
+        c.execute("""
+            SELECT booktitle
+            FROM books
+            WHERE bookid=%s
+            """, (book["sigbookid"],))
+        res = c.fetchone()
+        if res == None:
+            abort(500)
+        book["sigbooktitle"] = res[0]
 
     # pdfid = book["pdfid"]
 

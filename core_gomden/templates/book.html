@@ -25,6 +25,14 @@
             <div class="col-md-8">
 
                 <h1>{{booktitle}}</h1><br>
+                <p>
+                    
+                    By {{displayname}}{% if sigbookid != None and sigbookid != bookid%},
+
+                    author of <a href="{{url_for('core_gomden_blueprint.publicbookpage', bookid=sigbookid)}}">{{ sigbooktitle }}</a>
+                {% endif %}
+
+                </p>
 
             </div>
             <div class="col-md-2">

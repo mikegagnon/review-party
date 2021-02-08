@@ -415,7 +415,7 @@ def revRecToParas(rec):
     return rec
 
 
-@core_gomden_blueprint.route("/book/<int:bookid>", methods=["GET"])
+@core_gomden_blueprint.route("/public/book/<int:bookid>", methods=["GET"])
 def publicbookpage(bookid):
     form = EmptyForm()
 
@@ -434,7 +434,7 @@ def publicbookpage(bookid):
     edit = False
     review = None
 
-    return render_template("public-book-page.html", reviews=reviews, form=form, edit=edit, bookid=book["bookid"], booktitle=book["booktitle"], links=links, numpdfpages=numpdfpages, review=review)
+    return render_template("public-book-page.html", sigbookid=book["sigbookid"], sigbooktitle=book["sigbooktitle"], displayname=book["displayname"], reviews=reviews, form=form, edit=edit, bookid=book["bookid"], booktitle=book["booktitle"], links=links, numpdfpages=numpdfpages, review=review)
 
 
 @core_gomden_blueprint.route("/club-members-only/book/<bookid>", methods=["GET", "POST"])
@@ -491,7 +491,7 @@ def getExistingBook(userid, bookid):
     edit = userid == book["userid"]
     review = None
 
-    return render_template("book.html", reviews=reviews, form=form, edit=edit, bookid=book["bookid"], booktitle=book["booktitle"], links=links, numpdfpages=numpdfpages, review=review)
+    return render_template("book.html", displayname=book["displayname"], sigbookid=book["sigbookid"], sigbooktitle=book["sigbooktitle"], reviews=reviews, form=form, edit=edit, bookid=book["bookid"], booktitle=book["booktitle"], links=links, numpdfpages=numpdfpages, review=review)
 
 
 @core_gomden_blueprint.route('/page/<int:bookid>/<size>/<int:pagenum>.jpg')

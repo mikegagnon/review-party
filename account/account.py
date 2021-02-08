@@ -44,7 +44,7 @@ class CreateAccountForm(FlaskForm):
     email = StringField("Email")
 
 
-@account_blueprint.route("/dologin/<token>", methods=["GET"])
+@account_blueprint.route("/account/dologin/<token>", methods=["GET"])
 def doLogin(token):
     funcname = f'doLogin(token)'
 
@@ -100,7 +100,7 @@ def getInviteLink(userid):
 
     return invitelink
 
-@account_blueprint.route("/invite", methods=["GET"])
+@account_blueprint.route("/club-members-only/invite", methods=["GET"])
 def invitepage():
     if "userid" not in session:
         abort(403)
@@ -184,7 +184,7 @@ def getUnconfirmedUserByEmailFromUsers(email, users):
      else:
          raise MultipleUnconfirmedUsernamesForSameEmailAddress
 
-@account_blueprint.route("/create_account/<token>", methods=["GET", "POST"])
+@account_blueprint.route("/account/create/<token>", methods=["GET", "POST"])
 def create_account(token):
     funcname = "create_account()"
 
@@ -290,7 +290,7 @@ def create_account(token):
 
             return render_template("create-account-success.html", form=form, email=email)
 
-@account_blueprint.route("/confirm-email/<token>", methods=["GET"])
+@account_blueprint.route("/account/confirm-email/<token>", methods=["GET"])
 def confirm_email(token):
     funcname = f'confirm_email(token)'
 
@@ -332,7 +332,7 @@ def confirm_email(token):
     info(funcname, "success")
     return render_template("message.html", form=form, message="You have confirmed your account. You are now logged in.")
 
-@account_blueprint.route("/logout", methods=["GET", "POST"])
+@account_blueprint.route("/account/logout", methods=["GET", "POST"])
 def logout():
     funcname = "logout()"
 
@@ -350,7 +350,7 @@ def logout():
     pop_session()
     return render_template("message.html", form=form, message="You are now logged out.")
 
-@account_blueprint.route("/login", methods=["GET", "POST"])
+@account_blueprint.route("/account/login", methods=["GET", "POST"])
 def login():
     funcname = "login()"
 
@@ -386,82 +386,3 @@ def login():
 class ResetPasswordForm(FlaskForm):
     password1 = PasswordField("Password1")
     password2 = PasswordField("Password2")
-
-@account_blueprint.route("/reset-password/<token>", methods=["GET"])
-def reset_password(token):
-    funcname = "reset_password(token)"
-
-    try:
-        email = timedSerializer.loads(token, salt="forgot-password", max_age=86400)
-    except:
-        error(funcname, f"could not extract email from token. Abort 404")
-        abort(404)
-
-    if db.hasTokenBeenUsed(token):
-        debug(funcname, "token has already been used")
-        form = ForgotForm()
-        message = "Your forgot-password link has already been used. If you would like to reset your password again, please submit this form"
-        return render_template("forgot-password.html", form=form, message=message)
-
-    user = db.getConfirmedUserByEmail(email)
-
-    # No sidechannel leak here because we have the assurance of the token
-    if not user:
-        critcal(funcname, f"user with email isn't in database")
-        abort(404)
-
-    form = ResetPasswordForm(request.form)
-
-    # PUNT: is it secure to put the token in the form?
-    return render_template("reset-password.html", email=email, form=form, token=token, message=None)
-
-@account_blueprint.route("/do-password-reset/<token>", methods=["POST"])
-def do_password_reset(token):
-    funcname = "do_password_reset(token)"
-
-    try:
-        email = timedSerializer.loads(token, salt="forgot-password", max_age=config.MAX_TOKEN_AGE)
-    except:
-        error(funcname, f"could not extract email from token. Abort 404")
-        abort(404)
-
-    if db.hasTokenBeenUsed(token):
-        debug(funcname, "token has already been used")
-        form = ForgotForm()
-        message = "Your forgot-password link has already been used. If you would like to reset your password again, please submit this form."
-        return render_template("forgot-password.html", form=form, message=message)
-
-    user = db.getConfirmedUserByEmail(email)
-
-    # No sidechannel leak here because we have the assurance of the token
-    if not user:
-        critical(funcname, f"user with email isn't in database")
-        abort(404)
-
-    form = ResetPasswordForm(request.form)
-
-    password1 = form.password1.data
-    password2 = form.password2.data
-
-    if not config.sanePassword(password1) or not config.sanePassword(password2):
-        debug(funcname, f"password(s) aren't sane")
-        return render_template("reset-password.html", email=email, form=form, token=token, message="Your password must be at least %d characters long." % config.MIN_PASSWORD_LEN)
-
-    if password1 != password2:
-        debug(funcname, f"passwords don't match")
-        return render_template("reset-password.html", email=email, form=form, token=token, message="Your passwords do not match.")
-
-
-    password_hash = bcrypt.generate_password_hash(password1).decode('utf-8')
-
-    db.updateConfirmedPasswordByUsernameEmail(email, password_hash)
-
-    session["userid"] = user["userid"]
-    session["username"] = user["username"]
-    session["displayname"] = user["displayname"]
-    session["email"] = user["email"]
-
-    db.markTokenUsed(token)
-
-    return render_template("message.html", form=form, message="You have reset your password. You are now logged in.")
-

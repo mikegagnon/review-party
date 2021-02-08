@@ -195,7 +195,7 @@ def postNewReviewBook(userid, book):
 def reviewToParas(reviewtext):
     return list(filter(lambda x: not re.match(r"^\s+$", x), re.split(r"(\s*\n\s*)(\s*\n\s*)+",  reviewtext)))
 
-@core_gomden_blueprint.route('/myreviews')
+@core_gomden_blueprint.route('/club-members-only/myreviews')
 def myreviews():
     if "userid" not in session:
         abort(403)
@@ -209,7 +209,7 @@ def myreviews():
 
     return render_template("my-reviews.html", form=form, reviews=reviews)
 
-@core_gomden_blueprint.route('/mypoints')
+@core_gomden_blueprint.route('/club-members-only/mypoints')
 def mypoints():
     if "userid" not in session:
         abort(403)
@@ -231,7 +231,7 @@ def mypoints():
 
 
 # For reviewers to see their own reviews
-@core_gomden_blueprint.route('/myreview/<int:bookid>')
+@core_gomden_blueprint.route('/club-members-only/myreview/<int:bookid>')
 def existing_review_book(bookid):
 
     if "userid" not in session:
@@ -284,7 +284,7 @@ def postEditBook(userid, book):
 
     return redirect(url_for('core_gomden_blueprint.existingbook', bookid=bookid))
 
-@core_gomden_blueprint.route("/edit-book/<int:bookid>", methods=["GET", "POST"])
+@core_gomden_blueprint.route("/club-members-only/edit-book/<int:bookid>", methods=["GET", "POST"])
 def edit_book(bookid):
     if "userid" not in session:
         abort(403)
@@ -308,7 +308,7 @@ def edit_book(bookid):
         return postEditBook(userid, book)
 
 
-@core_gomden_blueprint.route("/review-book/<int:bookid>", methods=["GET", "POST"])
+@core_gomden_blueprint.route("/club-members-only/review-book/<int:bookid>", methods=["GET", "POST"])
 def review_book(bookid):
     if "userid" not in session:
         abort(403)
@@ -341,7 +341,7 @@ def review_book(bookid):
 class MyBooksForm(FlaskForm):
     bookid = StringField("bookid")
 
-@core_gomden_blueprint.route("/mybooks", methods=["GET", "POST"])
+@core_gomden_blueprint.route("/club-members-only/mybooks", methods=["GET", "POST"])
 def mybooks():
     if "userid" not in session:
         abort(403)
@@ -382,7 +382,7 @@ def getMybooks(userid):
 
 
 
-@core_gomden_blueprint.route("/new-book", methods=["GET", "POST"])
+@core_gomden_blueprint.route("/club-members-only/new-book", methods=["GET", "POST"])
 def newbook():
     if "userid" not in session:
         abort(403)
@@ -494,7 +494,7 @@ def getExistingBook(userid, bookid):
     return render_template("book.html", displayname=book["displayname"], sigbookid=book["sigbookid"], sigbooktitle=book["sigbooktitle"], reviews=reviews, form=form, edit=edit, bookid=book["bookid"], booktitle=book["booktitle"], links=links, numpdfpages=numpdfpages, review=review)
 
 
-@core_gomden_blueprint.route('/page/<int:bookid>/<size>/<int:pagenum>.jpg')
+@core_gomden_blueprint.route('/club-members-only/page/<int:bookid>/<size>/<int:pagenum>.jpg')
 def get_image(bookid, size, pagenum):
     if "userid" not in session:
         abort(403)

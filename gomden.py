@@ -28,6 +28,8 @@ app.register_blueprint(landing_blueprint)
 app.register_blueprint(account_blueprint)
 
 app.config["SECRET_KEY"] = config.SECRET_KEY
+# https://stackoverflow.com/questions/41144565/flask-does-not-see-change-in-js-file
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
 csrf = CSRFProtect(app)
 

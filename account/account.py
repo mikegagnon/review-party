@@ -53,8 +53,8 @@ def doLogin(token):
     try:
         [email] = timedSerializer.loads(token, salt="login-link", max_age=config.MAX_LOGIN_TOKEN_AGE)
     except:
-        error(funcname, f"could not extract email from token. Abort 404")
-        abort(404)
+        error(funcname, f"could not extract email from token. Abort 403")
+        abort(403)
 
     user = db.getConfirmedUserByEmail(email)
     if not user:

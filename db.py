@@ -41,7 +41,7 @@ def ErrorRollback(func):
     def wrapper(*a, **kw):
         try:
             return func(*a, **kw)
-        except e:
+        except Exception as e:
             print("ROLLING BACK", e)
             getConn().rollback()
             raise    

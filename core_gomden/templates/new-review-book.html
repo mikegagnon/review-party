@@ -3,8 +3,31 @@
 {% block newbook_active %}active{% endblock %}
 {% block content %}
 
-<main role="main" class="container">
+
 <form action="{{ url_for('core_gomden_blueprint.review_book', bookid=bookid) }}" method="post" enctype=multipart/form-data>
+
+  <div class="modal" tabindex="-1" role="dialog" id="mymodal">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><b>Are you sure?</b></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Your review becomes etched in stone, and you cannot change it, once you click the submit button.</p>
+          <button style="margin-bottom: 20px" type="submit" class="btn btn-danger">Submit review</button>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<main role="main" class="container">
 
     {% if message %}
       <div class="alert alert-warning" role="alert">
@@ -15,7 +38,10 @@
     <h1>Review: {{booktitle}}</h1>
 
     <div style="width: 10-0%">
-      <button style="margin-bottom: 20px" type="submit" class="btn btn-primary">Submit review</button>
+      <!--<button style="margin-bottom: 20px" type="submit" class="btn btn-primary">Submit review</button>-->
+      <button style="margin-bottom: 20px" type="button" class="btn btn-primary" data-toggle="modal" data-target="#mymodal">
+      Submit review
+    </button>
     </div>
     <div style="width: 100%">
       <div style="float: left; width: 70%;">
@@ -32,10 +58,13 @@
     
     
 
-    {{ form.csrf_token }}
+    
+</main>
+
+
+  {{ form.csrf_token }}
 
 </form>
-</main>
 
     <!-- https://stackoverflow.com/questions/5371089/count-characters-in-textarea -->
     <script>

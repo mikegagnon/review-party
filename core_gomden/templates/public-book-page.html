@@ -67,7 +67,7 @@
             </div>
             <div class="col-md-8">
 
-                    <a href="{{url_for('core_gomden_blueprint.get_image', bookid=bookid, size='large', pagenum=1)}}"><img style="width: 35%; float: left; margin-bottom: 15px; margin-right: 15px;" src="{{ url_for('core_gomden_blueprint.get_image', bookid=bookid, size='small', pagenum=1) }}"></a>
+                    <a href="{{url_for('core_gomden_blueprint.get_image', bookid=bookid, size='large', pagenum=1)}}"><img style="width: 50%; float: left; margin-bottom: 15px; margin-right: 15px;" src="{{ url_for('core_gomden_blueprint.get_image', bookid=bookid, size='small', pagenum=1) }}"></a>
             
                 {% if reviews|length == 0 %}
                     <p>{{reviews|length}} public {{ 'review' if reviews|length == 1 else 'reviews'}}</p>

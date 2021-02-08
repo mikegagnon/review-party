@@ -28,9 +28,12 @@
                     <div class="card-body">
                         {% if book != None %}
                             <!--{{ book["booktitle"] }}-->
-                            <a href="{{ url_for('core_gomden_blueprint.existingbook', bookid=book['bookid']) }}">
+                            <div><a href="{{ url_for('core_gomden_blueprint.existingbook', bookid=book['bookid']) }}">
                                 <img style="width: 100%" src="{{ url_for('core_gomden_blueprint.get_image', bookid=book['bookid'], size='small', pagenum=1) }}">
-                            </a>
+                            </a></div>
+
+                            <p style="margin-top: 10px;"><a href="{{ url_for('core_gomden_blueprint.existingbook', bookid=book['bookid']) }}">Club-only page</a></p>
+                            <p style="margin-top: 10px;"><a href="{{ url_for('core_gomden_blueprint.publicbookpage', bookid=book['bookid']) }}">Public page</a></p>
 
 
                         {% else %}

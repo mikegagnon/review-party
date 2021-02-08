@@ -463,8 +463,8 @@ def existingbook(bookid):
 
     userid = session["userid"]
     
-    #return getExistingBook(userid, bookid, shared=True)
-    return redirect(url_for('core_gomden_blueprint.publicbookpage', bookid=bookid))
+    return getExistingBook(userid, bookid, shared=True)
+    #return redirect(url_for('core_gomden_blueprint.publicbookpage', bookid=bookid))
 
 class ExistingBookForm(FlaskForm):
     bookid = StringField("bookid")
